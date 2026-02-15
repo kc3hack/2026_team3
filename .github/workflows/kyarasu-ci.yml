@@ -24,7 +24,7 @@ jobs:
         run: |
           cd Backend
 
-      # Frontend?
+      # Frontend
       - name: Install frontend
         run: |
           cd Frontend
