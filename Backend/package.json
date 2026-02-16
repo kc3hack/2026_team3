@@ -11,7 +11,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "symbol-sdk": "^3.3.0"
   },
   "devDependencies": {
     "jest": "^30.2.0",
