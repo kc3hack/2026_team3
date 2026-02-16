@@ -20,9 +20,8 @@ jobs:
           cd Backend
           npm install
 
-      - name: Test backend
+      - name: Run backend tests
         run: |
           cd Backend
-          - run: npm ci
-          - run: npm test -- Test
-
+          npm ci
+          npm test -- Test
