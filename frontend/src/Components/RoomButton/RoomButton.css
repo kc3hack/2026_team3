@@ -1,0 +1,44 @@
+* {
+    /*初期設定*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+.RoomButton {
+    /*大きさ設定*/
+    height: 40%;
+    width: 40%;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /*背景設定*/
+    background-color: white;
+
+    /*文字設定*/
+    color: #242B3C;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.RoomButtonicon {
+    /*大きさ設定*/
+    height: 80%;
+    width: 100%;
+
+    /*画像設定*/
+    object-fit: contain;
+}
+
+

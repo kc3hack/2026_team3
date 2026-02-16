@@ -1,0 +1,23 @@
+* {
+    /*初期設定*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+.ConfirmButton {
+    /*背景設定*/
+    background-color: #504FE7;
+
+    /*文字設定*/
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+}
