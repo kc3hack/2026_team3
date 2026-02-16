@@ -1,11 +1,11 @@
 const request = require('supertest');
 const express = require('express');
-const registerRouter = require('../../WorkSpace/routes/register');
+const registerRouter = require('../../Workspace/routes/register');
 const cookieParser = require('cookie-parser');
 
 // DBPerfモック化
-jest.mock('../../WorkSpace/Tools/DBPerf', () => jest.fn());
-const DBPerf = require('../../WorkSpace/Tools/DBPerf');
+jest.mock('../../Workspace/Tools/DBPerf', () => jest.fn());
+const DBPerf = require('../../Workspace/Tools/DBPerf');
 
 // Symbol SDKをモック化
 jest.mock('symbol-sdk', () => {
@@ -20,7 +20,7 @@ jest.mock('symbol-sdk', () => {
 });
 
 // AESControlをモック化
-jest.mock('../../WorkSpace/Tools/AESControl', () => ({
+jest.mock('../../Workspace/Tools/AESControl', () => ({
   encrypt: jest.fn(() => 'encrypted-key')
 }));
 
