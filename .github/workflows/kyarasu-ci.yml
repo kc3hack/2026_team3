@@ -12,7 +12,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       # Backend
       - name: Install backend
@@ -23,13 +23,6 @@ jobs:
       - name: Test backend
         run: |
           cd Backend
+          - run: npm ci
+          - run: npm test -- Test
 
-      # Frontend
-      - name: Install frontend
-        run: |
-          cd Frontend
-          npm install
-
-      - name: Test frontend
-        run: |
-          cd Frontend
