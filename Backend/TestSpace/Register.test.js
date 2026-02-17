@@ -1,6 +1,6 @@
 const request = require('supertest');
 const express = require('express');
-const registerRouter = require('../Workspace/routes/register');
+const registerRouter = require('../Workspace/Routes/Register');
 const cookieParser = require('cookie-parser');
 
 // DBPerfモック化
