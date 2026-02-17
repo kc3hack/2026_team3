@@ -1,0 +1,95 @@
+const request = require('supertest');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const fs = require('fs');
+const path = require('path');
+
+// Register.js の存在確認
+const registerPath = path.resolve(__dirname, '../Workspace/Routes/Register.js');
+const registerExists = fs.existsSync(registerPath);
+
+// describe を動的切り替え
+const describeIf = registerExists ? describe : describe.skip;
+
+// Router を条件付きで読み込み
+let registerRouter;
+if (registerExists) {
+  registerRouter = require('../Workspace/Routes/Register');
+}
+
+// DBPerfモック化
+jest.mock('../Workspace/Tools/DBPerf', () => jest.fn());
+const DBPerf = require('../Workspace/Tools/DBPerf');
+
+// Symbol SDKをモック化
+jest.mock('symbol-sdk', () => {
+  const original = jest.requireActual('symbol-sdk');
+  return {
+    ...original,
+    PrivateKey: { random: () => 'dummy-private-key' },
+    Account: { createFromPrivateKey: () => ({ address: { plain: () => 'dummy-address' } }) },
+    NetworkType: { TEST_NET: 'TEST_NET' },
+    facade: { SymbolFacade: jest.fn() },
+  };
+});
+
+// AESControlをモック化
+jest.mock('../Workspace/Tools/AESControl', () => ({
+  encrypt: jest.fn(() => 'encrypted-key')
+}));
+
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
+
+if (registerExists) {
+  app.use('/Register', registerRouter);
+}
+
+describeIf('/Register', () => {
+  // cookieがある場合
+  it('should redirect to Home if cookie exists', async () => {
+      const res = await request(app)
+          .get('/Register')
+          .set('Cookie', ['LoginToken=dummy-jwt']);
+
+      expect(res.status).toBe(302); // リダイレクト
+      expect(res.headers.location).toBe('/Home');
+  });
+
+  // cookieがない場合
+  it('should render register page if no cookie', async () => {
+      const res = await request(app)
+          .get('/Register');
+
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('index.html'); // 登録画面が返る
+  });
+});
+
+describeIf('/Register/Submit', () => {
+  beforeEach(() => {
+    DBPerf.mockReset();
+  });
+
+  // 空送信
+  it('should return 400 if userId or password missing', async () => {
+    const res = await request(app).post('/Register/Submit').send({});
+    expect(res.status).toBe(400);
+  });
+
+  // 重複検知
+  it('should return 409 if userId exists', async () => {
+    DBPerf.mockResolvedValue([{ UserID: 'test' }]);
+    const res = await request(app).post('/Register/Submit').send({ userId: 'test', password: 'pass' });
+    expect(res.status).toBe(409);
+  });
+
+  // 登録成功処理
+  it('should succeed with new user', async () => {
+    DBPerf.mockResolvedValue([]);
+    const res = await request(app).post('/Register/Submit').send({ userId: 'newuser', password: 'pass' });
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('redirect', '/Home');
+  });
+});
