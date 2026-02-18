@@ -5,7 +5,7 @@ const DBPerf = require('../Tools/DBPref');
 const VCM = require('../Tools/VerifyCookieMiddleware');
 const LeftToken = require('../Tools/LeftToken');
 const decrypt = require('../Tools/AESControl');
-const CreateTransferTx = require('../Tools/createTransferTx');
+const CreateTransferTx = require('../Tools/CreateTransferTx');
 const SignAndAnnounce = require('../Tools/SignAndAnnounce');
 
 // 送金処理

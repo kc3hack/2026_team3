@@ -13,10 +13,10 @@ const app = express();
 PORT = process.env.PORT || 5000;
 
 // ========== use系 ==========
-app.use(express.json);
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, '..', '..', 'Frontend', 'dist')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ========== Routes ==========
 // fs.readdirSync(ディレクトリパス)でそのディレクトリ内のファイル名を配列で取得
@@ -37,4 +37,4 @@ fs.readdirSync(routesDir).forEach((file) => {
 });
 
 // ========== listen ==========
-app.listen(PORT, '0.0.0.0', () => { console.log(`Server running at https://localhost:${PORT}`)} );
+app.listen(PORT, '0.0.0.0', () => { console.log(`Server running at http://localhost:${PORT}`)} );

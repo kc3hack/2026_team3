@@ -1,4 +1,4 @@
-const axios = require('axious');
+const axios = require('axios');
 
 async function LeftToken(address, NODE_URL) {
     try{

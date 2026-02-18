@@ -1,9 +1,14 @@
+# =========================
 # Environment files
+# =========================
 .env
 .env.*
 **/.env
 **/.env.*
+
+# =========================
 # Logs
+# =========================
 logs
 *.log
 npm-debug.log*
@@ -12,14 +17,25 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# =========================
+# Node
+# =========================
 node_modules
 dist
 dist-ssr
 *.local
-.env
-docker-compose.yml
 
-# Editor directories and files
+# =========================
+# Docker Compose
+# =========================
+docker-compose*.yml
+docker-compose*.yaml
+docker compose*.yml
+docker compose*.yaml
+
+# =========================
+# Editor
+# =========================
 .vscode/*
 !.vscode/extensions.json
 .idea

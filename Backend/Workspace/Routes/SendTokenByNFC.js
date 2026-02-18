@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const DBPerf = require('../Tools/DBPref');
 const VCM = require('../Tools/VerifyCookieMiddleware');
 const decrypt = require('../Tools/AESControl');
-const CreateTransferTx = require('../Tools/createTransferTx');
+const CreateTransferTx = require('../Tools/CreateTransferTx');
 const SignAndAnnounce = require('../Tools/SignAndAnnounce');
 
 // ==============================
