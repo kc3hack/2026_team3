@@ -13,6 +13,7 @@ let latestcardTime = null; // 最新のカード検知時間を保存する変�
 router.post('/NFC/Submit', async(req, res) => {
     try{
         const {userID, password} = req.body
+        const nfcRead = false; // NFCカードが読み取られたかのフラグ（実際にはNFCStateなどで管理する） 
 
         if(!latestcardTime || Date.now() - latestcardTime > 10000){
             return res.status(400).send("カードをもう一度かざしてください");
@@ -47,8 +48,8 @@ router.post('/NFC/Submit', async(req, res) => {
             console.log(`カードUID: ${latestcardUid} とユーザーID: ${userID} を紐づけました！`);
             latestcardUid = null;
             latestcardTime = null;
-
-            res.status(200).send({ message: 'NFC card linked successfully' });
+            nfcRead = true;
+            res.json({nfcRead: nfcRead});
         }
         else{
             console.log("パスワードが間違っています！");

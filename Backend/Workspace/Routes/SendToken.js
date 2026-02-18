@@ -73,9 +73,6 @@ router.post('/SendToken', VCM('LoginToken', process.env.LOGIN_SECRET), async(req
     return res.status(200).json({ message: "OK: Send Successful"});
 });
 
-
-
-
 router.get('/LeftToken', VCM('LoginToken', process.env.LOGIN_SECRET), async(req, res) => {
     const fromUserID = req.auth.userID;
     const userInfor = await DBPerf("送金元ユーザーの存在確認", "SELECT Address FROM IdentifyTable WHERE userID = ?", [fromUserID]);
