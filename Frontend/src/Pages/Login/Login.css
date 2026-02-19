@@ -146,6 +146,7 @@ form {
     /*文字設定*/
     font-size: 30px;
     font-weight: bold;
+    color: #242B3C;
 }
 
 .LoginError {

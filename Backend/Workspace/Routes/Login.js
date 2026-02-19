@@ -19,7 +19,8 @@ const InverseVCM = require('../Tools/InverseVCM');
 // /Login/へのアクセスでLogin画面表示
 router.get('/', InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET) ,(req, res) => {
     console.log("/Login-API is running");
-    res.sendFile(path.join(__dirname, "..", "..", "..", "Frontend", "src", "index.html"));
+    // Frontend はビルド後に /app/Frontend/dist に配置しているため dist の index.html を返す
+    res.sendFile(path.join(__dirname, "..", "..", "Frontend", "dist", "index.html"));
 });
 
 
