@@ -101,6 +101,7 @@ h2 {
     height: 100%;
     width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
 
     /*位置設定*/
     display: flex;
@@ -114,7 +115,7 @@ h2 {
 
 .HomeJoin {
     /*大きさ設定*/
-    min-height: 10%;
+    min-height: 80px;
     min-width: 400px;
     max-width: 100%;
 
@@ -127,6 +128,7 @@ h2 {
 
     /*余白設定*/
     padding: 1%;
+    padding-right: 5px;
     gap: 2%;
 
 }
@@ -135,6 +137,9 @@ h2 {
     /*位置設定*/
     display: flex;
     flex-direction: column;
+
+    /*大きさ設定*/
+    max-width: 70%;
 }
 
 .HomeField input {
@@ -156,6 +161,8 @@ h2 {
 
     /*余白設定*/
     gap: 5%;
+    padding-left: 10px;
+    padding-right: 10px;
 
 }
 

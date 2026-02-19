@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import InputField from "../../Components/InputField/InputField";
 import ConfirmButton from "../../Components/ConfirmButton/ConfirmButton";
-import icon from "../../Components/Elements/icon.png";
 import image from "../../Components/Elements/image.png";
 
 function Create() {
@@ -52,8 +51,7 @@ function Create() {
             <div className="CreateBackground">
                 <div className="CreateTab">
                     <div className="CreateLeft">
-                        <img src={icon} className="CreateIcon" alt="ロゴ" />
-                        <button type="button" onClick={() => { navigate("/"); }} className="CreateButton">
+                        <button type="button" onClick={() => { navigate("/Home"); }} className="CreateButton">
                             <h1>ルーム作成</h1>
                         </button>
                     </div>
@@ -128,9 +126,9 @@ function Create() {
                         </div>
                         <ConfirmButton label="作成" onClick={() => {
                             if (!RoomName || !TokenName || !RoomIcon || !TokenIcon) {
-                                if (!RoomName || !TokenName) setTextError("必要事項を入力してください");
-                                if (!RoomIcon) setRoomIconError("画像を選択してください");
-                                if (!TokenIcon) setTokenIconError("画像を選択してください");
+                                if (!RoomName || !TokenName) setTextError("入力が必要です");
+                                if (!RoomIcon) setRoomIconError("画像が必要です");
+                                if (!TokenIcon) setTokenIconError("画像が必要です");
                                 return;
                             } else {
                                 HandleCreate();

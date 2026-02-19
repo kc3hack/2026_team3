@@ -20,6 +20,7 @@ body,
     /*文字設定*/
     font-weight: bold;
     font-size: 25px;
+    color: #242B3C;
 
     /*飾り設定*/
     border: none;
@@ -31,4 +32,9 @@ body,
 
     /*背景設定*/
     background-color: #FFFFFF !important;
+
+    /* テキスト色を明示。ビルドやグローバル設定で上書きされる場合があるため優先度を上げる */
+    color: #242B3C !important;
+    caret-color: #242B3C !important;
 }
+

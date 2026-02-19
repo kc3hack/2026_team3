@@ -106,12 +106,14 @@ form {
     /*大きさ設定*/
     height: 85%;
     width: 80%;
+    overflow-y: auto;
 
     /*位置設定*/
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    
 
     /*余白設定*/
     padding-bottom: 5%;
@@ -139,6 +141,7 @@ form {
     /*大きさ設定*/
     width: 100%;
     height: 45%;
+    min-height: 180px;
 
     /*余白設定*/
     padding: 5%;
@@ -161,9 +164,6 @@ form {
 
     /*文字設定*/
     font-size: 40px;
-
-    /*背景設定*/
-    background-color: #FFFFFF;
 }
 
 .LoginRegister button {
