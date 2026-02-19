@@ -96,6 +96,7 @@ router.get('/LeftToken', VCM('LoginToken', process.env.LOGIN_SECRET), async(req,
 module.exports = router;
 
 
+
 /*
 1. cookieからuserIDを抽出
 2. 送金先のユーザーIDと送金額をリクエストボディから抽出

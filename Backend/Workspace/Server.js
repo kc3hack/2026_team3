@@ -39,7 +39,7 @@ fs.readdirSync(routesDir).forEach((file) => {
 
 // ========== listen ==========
 // SPA fallback: 未処理の GET リクエストは index.html を返す
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'Frontend', 'dist', 'index.html'));
 });
 
