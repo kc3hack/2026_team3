@@ -14,7 +14,7 @@ function Register() {
 
     async function HandleLogin() {
         try {
-            const res = await fetch('Login/Submit', {
+            const res = await fetch('/Register/Submit', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

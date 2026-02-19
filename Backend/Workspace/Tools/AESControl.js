@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // ========== 暗号化 ==========
 function encrypt(plainKey, plainText) {
@@ -50,7 +50,7 @@ function decrypt(plainKey, encryptedObj) {
   return decrypted.toString('utf8');
 }
 
-module.exports = {
+export {
   encrypt,
   decrypt
 };

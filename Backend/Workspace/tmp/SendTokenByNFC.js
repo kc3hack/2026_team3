@@ -3,7 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 
 // ツール類の読み込み
-const DBPerf = require('../Tools/DBPref');
+const DBPerf = require('../Tools/DBPerf');
 const VCM = require('../Tools/VerifyCookieMiddleware');
 const decrypt = require('../Tools/AESControl');
 const CreateTransferTx = require('../Tools/CreateTransferTx');

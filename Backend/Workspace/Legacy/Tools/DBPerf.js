@@ -17,6 +17,7 @@ JSON
     ...
 }
 ========== Manual ==========*/
+const db = require('./db');
 
 // DBPerf.js
 async function DBPerf(label, query, elements) {

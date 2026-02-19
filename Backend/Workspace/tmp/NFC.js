@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv').config();
-const DBPref = require('../Tools/DBPref');
+const DBPerf = require('../Tools/DBPerf');
 const argon2 = require('argon2');
 
 const router = express.Router();
@@ -32,19 +32,19 @@ router.post('/NFC/Submit', async(req, res) => {
         }
 
         // カードが既に紐づけられていないかの確認
-        const exitUid = await DBPref("カードが既に紐づけられていないかの確認","SELECT * FROM NFC WHERE UID = ?",[latestcardUid])
+        const exitUid = await DBPerf("カードが既に紐づけられていないかの確認","SELECT * FROM NFC WHERE UID = ?",[latestcardUid])
         if(exitUid.length != 0){
             console.log("このカードは既に紐づけられています！");
             return res.status(400).send({ message: 'This card is already linked to an account' });
         }
 
         // ユーザーIDが存在するかの確認とパスワードの照合
-        const userInfor = await DBPref("存在するアカウントかの確認","SELECT userID, password FROM users WHERE userID = ?",[userID])
+        const userInfor = await DBPerf("存在するアカウントかの確認","SELECT userID, password FROM users WHERE userID = ?",[userID])
         // ユーザーIDが存在しない場合はダミーパスワードと照合して常に失敗させる（セキュリティ対策）
         const comparePassword = userInfor.length == 0 ? process.env.DUMMY_PASSWORD : userInfor[0].password;
         if (await argon2.verify(comparePassword, password + process.env.PEPPER)){
             // アカウントとNFCカードの紐づけ
-            await DBPref("アカウントとNFCカードの紐づけ","INSERT INTO NFC (UID, userID) VALUES (?, ?)",[latestcardUid, userID])
+            await DBPerf("アカウントとNFCカードの紐づけ","INSERT INTO NFC (UID, userID) VALUES (?, ?)",[latestcardUid, userID])
             console.log(`カードUID: ${latestcardUid} とユーザーID: ${userID} を紐づけました！`);
             latestcardUid = null;
             latestcardTime = null;

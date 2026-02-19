@@ -12,11 +12,11 @@ Server.jsにおいて.envを絶対パス指定にしておきましょう。
 例: const dotenv = require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 #Usage
-app.get("/", VCM('LoginToken', LOGIN_SECRET), (req, res) => {...]});
+app.get("/", Auth(LOGIN_SECRET, 'LoginToken'), (req, res) => {...]});
 のようにしてミドルウェアとして使う
 ========== Manual ==========*/
 
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
 // VerifyCookieMiddleware.js
 function VCM(cookieName, secretKey) {
@@ -42,11 +42,9 @@ function VCM(cookieName, secretKey) {
             console.error(`[${logOwner}] ${cookieName} is not verified!`,err);
             // Shutdown Log
             console.log(`[${logOwner}] Shutdown!`);
-
-            // 検証に問題があった瞬間rootページへ飛ばす
-            return res.redirect("/");
+            return res.sendStatus(401);
         }
     };
 }
 
-export default VCM;
+module.exports = VCM;
