@@ -12,7 +12,7 @@ RUN npm install
 COPY Backend ./
 
 # ④ フロントdistコピー
-COPY Frontend/dist ./Workspace/public
+COPY frontend/dist ./Workspace/public
 
 EXPOSE 5000
 
