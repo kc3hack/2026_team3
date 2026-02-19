@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv').config();
-const DBPref = require('../Tools/DBPref');
+const DBPref = require('../Tools/DBPerf');
 const argon2 = require('argon2');
 
 const router = express.Router();
