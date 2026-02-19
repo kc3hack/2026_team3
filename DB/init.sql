@@ -1,36 +1,31 @@
--- データベース作成
 CREATE DATABASE IF NOT EXISTS db_for_trustoken;
 USE db_for_trustoken;
 
--- ユーザープロフィール
 CREATE TABLE IF NOT EXISTS Identify (
     UserID VARCHAR(50) PRIMARY KEY,
     Password VARCHAR(255) NOT NULL,
     PrivateKey VARCHAR(255) NOT NULL,
-    Address VARCHAR(255) NOT NULL,
+    Address VARCHAR(255) NOT NULL
 );
 
--- Rooms
 CREATE TABLE IF NOT EXISTS Rooms (
     UserID VARCHAR(50) PRIMARY KEY,
-    RoomName VARCHAR(100) NOT NULL,
+    RoomName VARCHAR(100) NOT NULL
 );
 
--- RoomsDetails
 CREATE TABLE IF NOT EXISTS RoomsDetails (
     RoomName VARCHAR(100) NOT NULL,
     RoomIconPath VARCHAR(255) NOT NULL,
     MosaicName VARCHAR(100) NOT NULL
 );
 
-//Mosaic
+-- Mosaic
 CREATE TABLE IF NOT EXISTS Mosaic (
     MosaicName VARCHAR(100) PRIMARY KEY,
     MosaicID VARCHAR(255) NOT NULL,
     MosaicIconPath VARCHAR(255) NOT NULL
 );
 
--- Schedules
 CREATE TABLE IF NOT EXISTS NFC (
     UID VARCHAR(50) PRIMARY KEY,
     UserID VARCHAR(255) NOT NULL

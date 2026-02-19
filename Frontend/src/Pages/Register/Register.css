@@ -161,6 +161,9 @@ form {
 
     /*文字設定*/
     font-size: 40px;
+
+    /*背景設定*/
+    background-color: #FFFFFF;
 }
 
 .LoginRegister button {
