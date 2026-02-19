@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mysql:8
+    container_name: db_for_trustoken
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: //2024::RiST//
+      MYSQL_DATABASE: db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./Backend/Workspace/DB/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+
+
+  backend:
+    build:
+      context: .
+      dockerfile: Backend/Dockerfile
+    container_name: backend_for_trustoken
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: //2024::RiST//
+      DB_NAME: db
+
+volumes:
+  db_data:
