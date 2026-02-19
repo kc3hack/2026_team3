@@ -42,7 +42,7 @@ function createFileName(originalName) {
 
 
 // ===ルーム作成API===
-router.post("/CreateRoom",VCM('LoginToken', process.env.LOGIN_SECRET), upload.fields([{ name: "RoomIcon", maxCount: 1 },{ name: "MosaicIcon", maxCount: 1 }]),async (req, res) => {
+router.post("/", VCM('LoginToken', process.env.LOGIN_SECRET), upload.fields([{ name: "RoomIcon", maxCount: 1 },{ name: "TokenIcon", maxCount: 1 }]), async (req, res) => {
     try {
       const userID = req.auth.userId;
       const { RoomName, MosaicName } = req.body;
@@ -55,7 +55,7 @@ router.post("/CreateRoom",VCM('LoginToken', process.env.LOGIN_SECRET), upload.fi
       //受け取ったMosaic情報をブロックチェーンに登録(発行)する処理をここに追加しても良い
 
       const RoomIconPath = await saveIcon(req.files.RoomIcon[0], "rooms");
-      const MosaicIconPath = await saveIcon(req.files.MosaicIcon[0], "tokens");
+      const MosaicIconPath = await saveIcon(req.files.TokenIcon[0], "tokens");
 
       await DBPerf(
         "INSERT Rooms",
