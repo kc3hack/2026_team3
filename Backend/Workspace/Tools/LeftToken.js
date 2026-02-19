@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 async function LeftToken(address, NODE_URL) {
     try{
@@ -10,4 +10,4 @@ async function LeftToken(address, NODE_URL) {
     }
 }
 
-module.exports = LeftToken;
+export default LeftToken;

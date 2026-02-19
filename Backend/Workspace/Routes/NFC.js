@@ -1,10 +1,11 @@
-const express = require('express');
-const path = require('path');
-const dotenv = require('dotenv').config();
-const DBPref = require('../Tools/DBPerf');
-const argon2 = require('argon2');
+import express from 'express';
+import dotenv from 'dotenv';
+import DBPref from '../Tools/DBPerf.js';
+import argon2 from 'argon2';
 
 const router = express.Router();
+
+dotenv.config();
 
 let latestcardUid = null; // 最新のカードUIDを保存する変数
 let latestcardTime = null; // 最新のカード検知時間を保存する変数
@@ -71,5 +72,5 @@ router.post('/NFC', (req, res) => {
     res.status(200).send({ message: 'Success' });
 });
 
-module.exports = router;
+export default router;
 

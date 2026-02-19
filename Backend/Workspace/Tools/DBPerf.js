@@ -19,6 +19,19 @@ JSON
 ========== Manual ==========*/
 
 // DBPerf.js
+import mysql from 'mysql2/promise';
+
+// DB接続設定
+
+// DB接続プールを作成
+const db = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+});
+
+// DB接続プールの作成
 async function DBPerf(label, query, elements) {
     // Startup Log
     const logOwner = "DBPerf";
@@ -46,4 +59,4 @@ async function DBPerf(label, query, elements) {
     }
 }
 
-module.exports = DBPerf;
+export default DBPerf;

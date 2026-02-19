@@ -23,7 +23,8 @@ mosaicはBigint型(数字末尾にnがつく)で指定する必要がある。
 ========== Manual ==========*/
 
 // CreateTransferTx.js
-const symbolSdk = require('symbol-sdk');
+import { PrivateKey } from 'symbol-sdk';
+import { SymbolFacade, KeyPair } from 'symbol-sdk/symbol';
 
 function CreateTransferTx({
     networkType = 'testnet',
@@ -40,9 +41,9 @@ function CreateTransferTx({
     console.log(`[${logOwner}] Input => networkType: ${networkType}, recipientRawAddress: ${recipientRawAddress}, messageText: ${messageText}, mosaics: ${mosaics}, deadlineHours: ${deadlineHours}`);
 
     // Facade 初期化
-    const facade = new symbolSdk.facade.SymbolFacade(networkType);
+    const facade = new SymbolFacade(networkType);
     // 秘密鍵 → KeyPair
-    const keyPair = new symbolSdk.symbol.KeyPair( new symbolSdk.PrivateKey(senderPrivateKey) );
+    const keyPair = new KeyPair(new PrivateKey(senderPrivateKey));
     // 宛先アドレス解析（Base32 → 生データ + ネットワーク検証）
     const recipient = facade.network.parseAddress(recipientRawAddress);
     // Deadline 作成
@@ -78,4 +79,4 @@ function CreateTransferTx({
     };
 }
 
-module.exports = CreateTransferTx;
+export default CreateTransferTx;

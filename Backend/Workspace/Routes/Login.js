@@ -1,10 +1,14 @@
-const express = require('express');
-const path = require('path');
-const dotenv = require('dotenv');
+import express from 'express';
+import path from 'path';
+import dotenv from 'dotenv';
 const router = express.Router();
-const argon2 = require('argon2');
-const DBPerf = require('../Tools/DBPerf');
-const CreateCookie = require('../Tools/CreateCookie');
+import argon2 from 'argon2';
+import { fileURLToPath } from 'url';
+import DBPerf from '../Tools/DBPerf.js';
+import CreateCookie from '../Tools/CreateCookie.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // use系
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
@@ -12,7 +16,7 @@ router.use(express.json());
 
 // ========== ブロックチェーンの準備 ==========
 //const symbolSdk = require('symbol-sdk');
-const InverseVCM = require('../Tools/InverseVCM');
+import InverseVCM from '../Tools/InverseVCM.js';
 //const facade = new symbolSdk.facade.SymbolFacade('testnet');
 
 // ========== 画面表示 ==========
@@ -64,4 +68,4 @@ router.post("/Submit", async (req, res) => {
     }
 })
 
-module.exports = router;
+export default router;

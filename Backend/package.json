@@ -2,15 +2,16 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "Workspace/Server.js",
   "scripts": {
-    "test": "jest"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
+    "@symbol-blockchain-community/symbol-rest-client": "^1.0.2",
     "argon2": "^0.44.0",
     "axios": "^1.6.0",
     "bcrypt": "^6.0.0",

@@ -45,4 +45,4 @@ async function SignAndAnnounce(tx, keyPair, facade, nodeUrl) {
     return;
 }
 
-module.exports = SignAndAnnounce;
+export default SignAndAnnounce;

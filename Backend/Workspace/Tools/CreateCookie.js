@@ -16,7 +16,7 @@ Server.jsにおいて.envを絶対パス指定にしておきましょう。
 例: const dotenv = require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 ========== Manual ==========*/
 
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 // CreateCookie.js
 function CreateCookie({res, cookieName, payload, secretKey, deadlineHours, httpOnly = true, sameSite = 'strict'}) {
@@ -35,4 +35,4 @@ function CreateCookie({res, cookieName, payload, secretKey, deadlineHours, httpO
     console.log(`[${logOwner}] Shutdown!`);
 }
 
-module.exports = CreateCookie;
+export default CreateCookie;

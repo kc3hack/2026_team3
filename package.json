@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^7.13.0"
+    "react-router-dom": "^7.13.0",
+    "symbol-sdk": "^3.3.0"
   }
 }

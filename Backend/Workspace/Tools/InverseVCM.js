@@ -15,7 +15,7 @@ app.get("/", InverseVCM('LoginToken', LOGIN_SECRET), (req, res) => {...]});
 のようにしてミドルウェアとして使う
 ========== Manual ==========*/
 
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 // InverseVCM.js
 function InverseVCM(cookieName, secretKey) {
@@ -49,4 +49,4 @@ function InverseVCM(cookieName, secretKey) {
     };
 }
 
-module.exports = InverseVCM;
+export default InverseVCM;

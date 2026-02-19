@@ -1,13 +1,13 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // ツール類の読み込み
-const DBPerf = require('../Tools/DBPerf');
-const VCM = require('../Tools/VerifyCookieMiddleware');
-const decrypt = require('../Tools/AESControl');
-const CreateTransferTx = require('../Tools/CreateTransferTx');
-const SignAndAnnounce = require('../Tools/SignAndAnnounce');
+import DBPerf from '../Tools/DBPerf.js';
+import VCM from '../Tools/VerifyCookieMiddleware.js';
+import { decrypt } from '../Tools/AESControl.js';
+import CreateTransferTx from '../Tools/CreateTransferTx.js';
+import SignAndAnnounce from '../Tools/SignAndAnnounce.js';
 
 // ==============================
 // 予約管理 (オンメモリ)
@@ -193,4 +193,4 @@ router.post('/NFC', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

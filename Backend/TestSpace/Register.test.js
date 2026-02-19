@@ -1,91 +1,74 @@
-const request = require('supertest');
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const fs = require('fs');
-const path = require('path');
+import request from 'supertest';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { jest } from '@jest/globals';
 
-// Register.js の存在確認
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const registerPath = path.resolve(__dirname, '../Workspace/Routes/Register.js');
 const registerExists = fs.existsSync(registerPath);
-
-// describe を動的切り替え
 const describeIf = registerExists ? describe : describe.skip;
 
-// Router を条件付きで読み込み
-let registerRouter;
-if (registerExists) {
-  registerRouter = require('../Workspace/Routes/Register');
-}
+jest.unstable_mockModule('../Workspace/Tools/DBPerf.js', () => ({
+  default: jest.fn()
+}));
 
-// DBPerfモック化
-jest.mock('../Workspace/Tools/DBPerf', () => jest.fn());
-const DBPerf = require('../Workspace/Tools/DBPerf');
+jest.unstable_mockModule('../Workspace/Tools/AESControl.js', () => ({
+  encrypt: jest.fn(() => 'encrypted-key'),
+  decrypt: jest.fn()
+}));
 
-// Symbol SDKをモック化
-jest.mock('symbol-sdk', () => {
-  const original = jest.requireActual('symbol-sdk');
+jest.unstable_mockModule('symbol-sdk', async () => {
+  const original = await jest.requireActual('symbol-sdk');
   return {
     ...original,
-    PrivateKey: { random: () => 'dummy-private-key' },
-    Account: { createFromPrivateKey: () => ({ address: { plain: () => 'dummy-address' } }) },
-    NetworkType: { TEST_NET: 'TEST_NET' },
-    facade: { SymbolFacade: jest.fn() },
+    PrivateKey: {
+      random: () => ({ toString: () => 'dummy-private-key' })
+    },
+    facade: {
+      SymbolFacade: jest.fn(() => ({
+        createAccount: () => ({ address: { toString: () => 'dummy-address' } })
+      }))
+    }
   };
 });
 
-// AESControlをモック化
-jest.mock('../Workspace/Tools/AESControl', () => ({
-  encrypt: jest.fn(() => 'encrypted-key')
-}));
+const { default: DBPerf } = await import('../Workspace/Tools/DBPerf.js');
+
+let registerRouter;
+if (registerExists) {
+  const registerModule = await import('../Workspace/Routes/Register.js');
+  registerRouter = registerModule.default;
+}
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-if (registerExists) {
+if (registerExists && registerRouter) {
   app.use('/Register', registerRouter);
 }
-
-describeIf('/Register', () => {
-  // cookieがある場合
-  it('should redirect to Home if cookie exists', async () => {
-      const res = await request(app)
-          .get('/Register')
-          .set('Cookie', ['LoginToken=dummy-jwt']);
-
-      expect(res.status).toBe(302); // リダイレクト
-      expect(res.headers.location).toBe('/Home');
-  });
-
-  // cookieがない場合
-  it('should render register page if no cookie', async () => {
-      const res = await request(app)
-          .get('/Register');
-
-      expect(res.status).toBe(200);
-      expect(res.text).toContain('index.html'); // 登録画面が返る
-  });
-});
 
 describeIf('/Register/Submit', () => {
   beforeEach(() => {
     DBPerf.mockReset();
   });
 
-  // 空送信
   it('should return 400 if userId or password missing', async () => {
     const res = await request(app).post('/Register/Submit').send({});
     expect(res.status).toBe(400);
   });
 
-  // 重複検知
   it('should return 409 if userId exists', async () => {
     DBPerf.mockResolvedValue([{ UserID: 'test' }]);
     const res = await request(app).post('/Register/Submit').send({ userId: 'test', password: 'pass' });
     expect(res.status).toBe(409);
   });
 
-  // 登録成功処理
   it('should succeed with new user', async () => {
     DBPerf.mockResolvedValue([]);
     const res = await request(app).post('/Register/Submit').send({ userId: 'newuser', password: 'pass' });

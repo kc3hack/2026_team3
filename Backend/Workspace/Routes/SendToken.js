@@ -1,12 +1,12 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const DBPerf = require('../Tools/DBPerf');
-const VCM = require('../Tools/VerifyCookieMiddleware');
-const LeftToken = require('../Tools/LeftToken');
-const decrypt = require('../Tools/AESControl');
-const CreateTransferTx = require('../Tools/CreateTransferTx');
-const SignAndAnnounce = require('../Tools/SignAndAnnounce');
+import jwt from 'jsonwebtoken';
+import DBPerf from '../Tools/DBPerf.js';
+import VCM from '../Tools/VerifyCookieMiddleware.js';
+import LeftToken from '../Tools/LeftToken.js';
+import { decrypt } from '../Tools/AESControl.js';
+import CreateTransferTx from '../Tools/CreateTransferTx.js';
+import SignAndAnnounce from '../Tools/SignAndAnnounce.js';
 
 // 送金処理
 router.post('/SendToken', VCM('LoginToken', process.env.LOGIN_SECRET), async(req, res) => {
@@ -93,7 +93,7 @@ router.get('/LeftToken', VCM('LoginToken', process.env.LOGIN_SECRET), async(req,
 //     res.status(200).send(roomDetail);
 // });
 
-module.exports = router;
+export default router;
 
 
 

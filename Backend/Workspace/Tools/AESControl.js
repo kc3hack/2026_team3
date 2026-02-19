@@ -1,7 +1,7 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // ========== 暗号化 ==========
-function encrypt(plainKey, plainText) {
+export function encrypt(plainKey, plainText) {
   // ① 平文1から32byteの鍵を作る
   const key = crypto
     .createHash('sha256')
@@ -29,7 +29,7 @@ function encrypt(plainKey, plainText) {
 }
 
 // ========== 復号化 ==========
-function decrypt(plainKey, encryptedObj) {
+export function decrypt(plainKey, encryptedObj) {
   const key = crypto
     .createHash('sha256')
     .update(plainKey)
@@ -50,7 +50,7 @@ function decrypt(plainKey, encryptedObj) {
   return decrypted.toString('utf8');
 }
 
-module.exports = {
+export default {
   encrypt,
   decrypt
 };

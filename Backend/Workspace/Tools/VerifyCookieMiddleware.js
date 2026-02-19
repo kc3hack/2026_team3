@@ -16,7 +16,7 @@ app.get("/", Auth(LOGIN_SECRET, 'LoginToken'), (req, res) => {...]});
 のようにしてミドルウェアとして使う
 ========== Manual ==========*/
 
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 // VerifyCookieMiddleware.js
 function VCM(cookieName, secretKey) {
@@ -47,4 +47,4 @@ function VCM(cookieName, secretKey) {
     };
 }
 
-module.exports = VCM;
+export default VCM;

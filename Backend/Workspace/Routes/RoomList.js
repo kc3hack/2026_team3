@@ -1,6 +1,6 @@
-const express = require('express');
-const DBPerf = require('../Tools/DBPerf');
-const VCM = require('../Tools/VerifyCookieMiddleware');
+import express from 'express';
+import DBPerf from '../Tools/DBPerf.js';
+import VCM from '../Tools/VerifyCookieMiddleware.js';
 const router = express.Router();
 
 
@@ -16,4 +16,4 @@ router.get('/RoomList', VCM('LoginToken', process.env.LOGIN_SECRET), async (req,
     res.json({ RoomList });
 
 }); 
-module.exports = router;
+export default router;
