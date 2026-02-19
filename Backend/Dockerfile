@@ -11,8 +11,9 @@ RUN npm install
 # ③ バックエンド本体コピー
 COPY Backend ./
 
-# ④ フロントdistコピー
-COPY Frontend/dist ./Workspace/public
+# ④ フロントdistをサーバが参照する場所へコピー
+# Server.js が repo ルート直下の Frontend/dist を参照するため、/app/Frontend/dist に配置する
+COPY Frontend/dist ./Frontend/dist
 
 EXPOSE 5000
 

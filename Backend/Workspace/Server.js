@@ -16,7 +16,8 @@ PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, '..', '..', 'Frontend', 'dist')));
+// コンテナ内では /app/Frontend/dist に配置しているため1階層上を参照する
+app.use(express.static(path.join(__dirname, '..', 'Frontend', 'dist')));
 
 // ========== Routes ==========
 // fs.readdirSync(ディレクトリパス)でそのディレクトリ内のファイル名を配列で取得
@@ -37,4 +38,9 @@ fs.readdirSync(routesDir).forEach((file) => {
 });
 
 // ========== listen ==========
+// SPA fallback: 未処理の GET リクエストは index.html を返す
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'Frontend', 'dist', 'index.html'));
+});
+
 app.listen(PORT, '0.0.0.0', () => { console.log(`Server running at https://localhost:${PORT}`)} );
