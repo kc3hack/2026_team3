@@ -5,15 +5,9 @@ CREATE TABLE Identify (
     PrivateKey    TEXT NOT NULL
 );
 
-CREATE TABLE Rooms (
-    UserID    VARCHAR(255) NOT NULL,
-    RoomName  VARCHAR(100) NOT NULL,
-
-    PRIMARY KEY (UserID, RoomName),
-    FOREIGN KEY (UserID) REFERENCES Identify(UserID)
-        ON DELETE CASCADE,
-    FOREIGN KEY (RoomName) REFERENCES RoomsDetail(RoomName)
-        ON DELETE CASCADE
+CREATE TABLE Mosaic (
+    MosaicID    VARCHAR(255) PRIMARY KEY,
+    MosaicName  VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE RoomDetails (
@@ -25,9 +19,15 @@ CREATE TABLE RoomDetails (
     FOREIGN KEY (MosaicName) REFERENCES Mosaic(MosaicName)
 );
 
-CREATE TABLE Mosaic (
-    MosaicID    TEXT PRIMARY KEY,
-    MosaicName  VARCHAR(100) UNIQUE NOT NULL
+CREATE TABLE Rooms (
+    UserID    VARCHAR(255) NOT NULL,
+    RoomName  VARCHAR(100) NOT NULL,
+
+    PRIMARY KEY (UserID, RoomName),
+    FOREIGN KEY (UserID) REFERENCES Identify(UserID)
+        ON DELETE CASCADE,
+    FOREIGN KEY (RoomName) REFERENCES RoomDetails(RoomName)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE NFC (
