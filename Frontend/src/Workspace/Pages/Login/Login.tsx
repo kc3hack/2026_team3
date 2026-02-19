@@ -14,7 +14,7 @@ function Login() {
 
     async function HandleLogin() {
         try {
-            const res = await fetch('Login/Submit', {
+            const res = await fetch('/Login/Submit', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

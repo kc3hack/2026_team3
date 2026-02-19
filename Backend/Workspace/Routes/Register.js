@@ -62,7 +62,7 @@ router.use(express.json());
 router.get(
   '/',
   // 既にログインしている場合はアクセス拒否するミドルウェア
-  InverseVCM('LoginToken', process.env.LOGIN_SECRET),
+  InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET),
 
   (req, res) => {
     console.log("/Register-API is running");
@@ -83,7 +83,7 @@ router.post(
   '/Submit',
 
   // ログイン済みなら拒否
-  InverseVCM('LoginToken', process.env.LOGIN_SECRET),
+  InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET),
 
   async (req, res) => {
 
@@ -127,7 +127,8 @@ router.post(
       const facade = new SymbolFacade('testnet');
 
       const privateKey = PrivateKey.random();
-      const address    = facade.createAccount(privateKey);
+      const account    = facade.createAccount(privateKey);
+      const address    = account.address.toString();
       const privateKeyString = privateKey.toString();
 
       console.log("秘密鍵:", privateKeyString);
