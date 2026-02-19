@@ -19,7 +19,7 @@ services:
       dockerfile: Backend/Dockerfile
     container_name: backend_for_trustoken
     ports:
-      - "5001:5000"
+      - "5000:5000"
     depends_on:
       - db
     environment:
