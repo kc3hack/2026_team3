@@ -17,7 +17,12 @@ body,
     background-color: #504FE7;
 
     /*文字設定*/
-    color: white;
+    color: white !important;
     font-weight: bold;
     white-space: nowrap;
+}
+
+.ConfirmButton p {
+    /*文字設定*/
+    color: white !important;
 }

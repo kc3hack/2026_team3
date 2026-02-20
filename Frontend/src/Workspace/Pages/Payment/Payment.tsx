@@ -16,7 +16,9 @@ function Payment() {
     const { roomId } = useParams<{ roomId: string }>();
     const [roomName, setRoomName] = useState("");
     const [roomIcon, setRoomIcon] = useState("");
-    const [showModal, setShowModal] = useState(false);
+    const [password, setPassword] = useState("");
+    const [passModal, setPassModal] = useState(false);
+    const [nfcModal, setNFCModal] = useState(false);
 
     useEffect(() => {
         async function fetchToken() {
@@ -92,8 +94,32 @@ function Payment() {
         }
     }
 
+    async function HandlePass() {
+        try {
+            const res = await fetch('Login/Token', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ password }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                toast.error("送金に失敗しました");
+                console.log("Faild: SendToken", data);
+                return;
+            } else {
+                toast.success("送金しました");
+                console.log("Success: SendToken");
+            }
+        } catch (err) {
+            toast.error('通信エラーが発生しました');
+            console.log("Faild: Communication");
+        }
+    }
+
     useEffect(() => { //NFC受信
-        if (!showModal) return;
+        if (!nfcModal) return;
 
         //ポーリング
         const interval = setInterval(async () => {
@@ -105,9 +131,10 @@ function Payment() {
                 const data = await res.json();
 
                 if (data.nfcRead === true) {
-                    setShowModal(false);
+                    setNFCModal(false);
                     clearInterval(interval);
                     HandlePayment();
+                    HandlePass();
                 }
             } catch (e) {
                 console.log("Polling error:", e);
@@ -117,7 +144,7 @@ function Payment() {
 
         return () => clearInterval(interval);
 
-    }, [showModal]);
+    }, [nfcModal]);
 
     return (
         <div className="PaymentBackground">
@@ -163,27 +190,54 @@ function Payment() {
                         } else if (isNaN(Number(token)) || Number(token) <= 0) {
                             setError("支払額は正の数を入力してください");
                         }
-                           else if ((handToken - token) < 0) { 
+                        else if ((1000 - token) < 0) { //本来はhandToken
                             setError("残高が不足しています");
                         }
                         else {
-                            setShowModal(true)
+                            setPassModal(true)
                         }
                     }}
                         type="button" />
                 </div>
-                {showModal && (
+            </div>
+             {passModal && (
+                    <div className="ModalBackground">
+                        <div className="ModalPassBox">
+                            <p>パスワードを入力してください</p>
+                            <div className="ModalInput">
+                                <InputField name="password" type="password"
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        setError("");
+                                    }}
+                                    placeholder="" />
+                                {error && <p className="PaymentError">{error}</p>}
+                            </div>
+                            <div className="PassModal">
+                                <ConfirmButton label="確認" onClick={() => {
+                                    if (password === "") {
+                                        setError("入力が必要です");
+                                    }
+                                    else {
+                                        setPassModal(false)
+                                        setNFCModal(true)
+                                    }
+                                }}type="button" />
+
+                                <ConfirmButton label="戻る" onClick={() => {setPassModal(false)}}type="button" />
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {nfcModal && (
                     <div className="ModalBackground">
                         <div className="ModalBox">
                             <p>NFCをかざしてください</p>
                             <img src={NFCimage} className="NFCimage" alt="" />
-                            <button type="button"
-                                onClick={() => setShowModal(false)}
-                            >キャンセル</button>
+                            <ConfirmButton label="キャンセル" onClick={() => {setNFCModal(false)}}type="button" />
                         </div>
                     </div>
                 )}
-            </div>
         </div>
     )
 }

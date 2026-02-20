@@ -15,6 +15,9 @@ function Create() {
     const [TextError, setTextError] = useState("");
     const [RoomIconError, setRoomIconError] = useState("");
     const [TokenIconError, setTokenIconError] = useState("");
+    const [password, setPassword] = useState("");
+    const [passModal, setPassModal] = useState(false);
+    const [error, setError] = useState("");
 
     async function HandleCreate() {
         const formData = new FormData();
@@ -39,6 +42,30 @@ function Create() {
                 toast.success("ルームを作成しました");
                 console.log("Success: Cerate room");
                 navigate("/Home");
+            }
+        } catch (err) {
+            toast.error('通信エラーが発生しました');
+            console.log("Faild: Communication");
+        }
+    }
+
+    async function HandlePass() {
+        try {
+            const res = await fetch('Login/Token', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ password }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                toast.error("送金に失敗しました");
+                console.log("Faild: SendToken", data);
+                return;
+            } else {
+                toast.success("送金しました");
+                console.log("Success: SendToken");
             }
         } catch (err) {
             toast.error('通信エラーが発生しました');
@@ -131,12 +158,43 @@ function Create() {
                                 if (!TokenIcon) setTokenIconError("画像が必要です");
                                 return;
                             } else {
-                                HandleCreate();
+                                setPassModal(true);
                             }
                         }}
                             type="button" />
                     </div>
                 </div>
+                {passModal && (
+                    <div className="ModalBackground">
+                        <div className="ModalPassBox">
+                            <p>パスワードを入力してください</p>
+                            <div className="ModalInput">
+                                <InputField name="password" type="password"
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        setError("");
+                                    }}
+                                    placeholder="" />
+                                {error && <p className="PaymentError">{error}</p>}
+                            </div>
+                            <div className="PassModal">
+                                <ConfirmButton label="確認" onClick={() => {
+                                    if (password === "") {
+                                        setError("入力が必要です");
+                                    }
+                                    else {
+                                        setPassModal(false)
+                                        HandleCreate();
+                                        HandlePass();
+                                        navigate("/Home");
+                                    }
+                                }}type="button" />
+
+                                <ConfirmButton label="戻る" onClick={() => {setPassModal(false)}}type="button" />
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </form>
     )

@@ -255,3 +255,23 @@ form {
     color: red;
 }
 
+.ModalPassBox button {
+    /*大きさ設定*/
+    width: 50%;
+
+    /*背景設定*/
+    background-color: #504FE7;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /*文字設定*/
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 35px;
+}
+
