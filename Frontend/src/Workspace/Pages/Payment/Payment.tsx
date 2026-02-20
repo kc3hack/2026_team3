@@ -13,8 +13,8 @@ function Payment() {
     const [token, setToken] = useState<number>(0);
     const [handToken, setHandToken] = useState<number>(0);
     const [error, setError] = useState("");
-    const { roomId } = useParams<{ roomId: string }>();
-    const [roomName, setRoomName] = useState("");
+    const { roomName } = useParams<{ roomName: string }>();
+    const decodedRoomName = decodeURIComponent(roomName ?? "");
     const [roomIcon, setRoomIcon] = useState("");
     const [password, setPassword] = useState("");
     const [passModal, setPassModal] = useState(false);
@@ -44,14 +44,14 @@ function Payment() {
 
     useEffect(() => {
         async function fetchRooms() {
-            if (!roomId) return;
+            if (!decodedRoomName) return;
 
             try {
                 const res = await fetch('/ClientRooms/', {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
-                    body: JSON.stringify({ roomId }),
+                    body: JSON.stringify({ roomName: decodedRoomName }),
                 });
 
                 if (!res.ok) {
@@ -60,7 +60,6 @@ function Payment() {
                 }
 
                 const data = await res.json();
-                setRoomName(data.roomName);
                 setRoomIcon(data.roomIcon);
             } catch (err) {
                 toast.error("通信エラー");
@@ -68,7 +67,7 @@ function Payment() {
         }
 
         fetchRooms();
-    }, [roomId]);
+    }, [decodedRoomName]);
 
     async function HandlePayment() {
         try {
@@ -76,31 +75,7 @@ function Payment() {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ address, token }),
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                toast.error("送金に失敗しました");
-                console.log("Faild: SendToken", data);
-                return;
-            } else {
-                toast.success("送金しました");
-                console.log("Success: SendToken");
-            }
-        } catch (err) {
-            toast.error('通信エラーが発生しました');
-            console.log("Faild: Communication");
-        }
-    }
-
-    async function HandlePass() {
-        try {
-            const res = await fetch('Login/Token', {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ password }),
+                body: JSON.stringify({ address, token, password }),
             });
 
             if (!res.ok) {
@@ -133,8 +108,7 @@ function Payment() {
                 if (data.nfcRead === true) {
                     setNFCModal(false);
                     clearInterval(interval);
-                    HandlePayment();
-                    HandlePass();
+                    await HandlePayment();
                 }
             } catch (e) {
                 console.log("Polling error:", e);
@@ -152,7 +126,7 @@ function Payment() {
                 <div className="PaymentLeft">
                     <img src={roomIcon} className="PaymentIcon" alt="" />
                     <button type="button" onClick={() => { navigate("/Home"); }} className="PaymentButton">
-                        <h1>{roomName}</h1>
+                        <h1>{decodedRoomName}</h1>
                     </button>
                 </div>
             </div>
@@ -190,7 +164,7 @@ function Payment() {
                         } else if (isNaN(Number(token)) || Number(token) <= 0) {
                             setError("支払額は正の数を入力してください");
                         }
-                        else if ((1000 - token) < 0) { //本来はhandToken
+                        else if ((handToken - token) < 0) { //本来はhandToken
                             setError("残高が不足しています");
                         }
                         else {
