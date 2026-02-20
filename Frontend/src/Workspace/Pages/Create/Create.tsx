@@ -15,7 +15,6 @@ function Create() {
     const [TextError, setTextError] = useState("");
     const [RoomIconError, setRoomIconError] = useState("");
     const [TokenIconError, setTokenIconError] = useState("");
-    const [Password, setPassword] = useState("");
 
     async function HandleCreate() {
         const formData = new FormData();
@@ -23,7 +22,6 @@ function Create() {
         formData.append("MosaicName", TokenName);
         if (RoomIcon) formData.append("RoomIcon", RoomIcon);
         if (TokenIcon) formData.append("MosaicIcon", TokenIcon);
-        formData.append("Password", Password);
 
         try {
             const res = await fetch('/CreateRoom', {
@@ -120,18 +118,6 @@ function Create() {
                                 <InputField name="トークン名" type="text"
                                     onChange={(e) => {
                                         setTokenName(e.target.value);
-                                        setTextError("");
-                                    }}
-                                    placeholder="" />
-                                {TextError && <p className="CreateError">{TextError}</p>}
-                            </div>
-                        </div>
-                        <div className="CreateInput">
-                            <div className="CreateOneset">
-                                <p>Password</p>
-                                <InputField name="パスワード" type="text"
-                                    onChange={(e) => {
-                                        setPassword(e.target.value);
                                         setTextError("");
                                     }}
                                     placeholder="" />

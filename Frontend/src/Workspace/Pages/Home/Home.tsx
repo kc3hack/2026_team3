@@ -72,7 +72,6 @@ function Home() {
         }
     }
 
-
     return (
         <div className="HomeBackground">
             <div className="HomeTab">

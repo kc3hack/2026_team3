@@ -1,0 +1,269 @@
+* {
+    /*初期設定*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+h1{
+    /*文字設定*/
+    color: #242B3C;
+    font-size: 40px;
+    white-space: nowrap;
+    
+}
+
+h2 {
+    /*文字設定*/
+    color: #242B3C;
+}
+
+form {
+    /*大きさ設定*/
+    height: 100%;
+    width: 100%;
+}
+
+.NFCBackground {
+    /*大きさ設定*/
+    height: 100%;
+    width: 100%;
+
+    /*背景設定*/
+    background-color: #F3F4F8;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+}
+
+.NFCTab {
+    /*大きさ設定*/
+    height: 10%;
+    width: 100%;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: row;
+
+    /*背景設定*/
+    background-color: white;
+}
+
+.NFCLeft {
+    /*大きさ設定*/
+    height: 100%;
+    width: 50%;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    /*余白設定*/
+    padding: 1%;
+    gap: 2%;
+}
+
+.NFCIcon{
+    /*大きさ設定*/
+    height: 100%;
+    object-fit: contain;
+    
+}
+
+.NFCButton{
+    /*背景設定*/
+    background-color: white;
+
+    /*飾り設定*/
+    border: none;
+}
+
+.NFCRight {
+    /*大きさ設定*/
+    height: 100%;
+    width: 50%;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2%;
+
+    /*余白設定*/
+    padding: 1%;
+    gap: 2%;
+}
+
+.NFCBox {
+    /*大きさ設定*/
+    height: 90%;
+    width: 100%;
+    overflow-y: auto;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /*余白設定*/
+    padding: 2%;
+    gap: 2%;
+}
+
+.NFCRegister {
+    /*大きさ設定*/
+    height: 85%;
+    width: 80%;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    /*余白設定*/
+    padding-bottom: 5%;
+    gap: 5%;
+
+    /*背景設定*/
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.3);
+}
+
+.NFCInput {
+    /*大きさ設定*/
+    width: 80%;
+    height: 80%;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.NFCOneset {
+    /*大きさ設定*/
+    width: 100%;
+    height: 45%;
+    min-height: 180px;
+
+    /*余白設定*/
+    padding: 5%;
+
+    /*文字設定*/
+    font-size: 30px;
+    font-weight: bold;
+    color: #242B3C;
+}
+
+.NFCError {
+    /*文字設定*/
+    color: red;
+}
+
+.NFCOneset input {
+    /*大きさ設定*/
+    width: 100%;
+    max-height: 90px;
+
+    /*文字設定*/
+    font-size: 40px;
+}
+
+.NFCRegister button {
+    /*大きさ設定*/
+    width: 60%;
+    height: 20%;
+
+    /*文字設定*/
+    font-size: 40px;
+}
+
+.ModalBackground {
+    /*大きさ設定*/
+    width: 100%;
+    height: 100%;
+    
+
+    /*位置設定*/
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /*背景設定*/
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+
+}
+
+.ModalBox {
+    /*大きさ設定*/
+    width: 60%;
+    height: 60%;
+    min-width: 300px;
+    min-height: 550px;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /*背景設定*/
+    background-color: white;
+    border-radius: 20px;
+
+    /*余白設定*/
+    gap: 5%;
+    padding: 30px;
+}
+
+.ModalBox p {
+    /*文字設定*/
+    color: #242B3C;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.NFCimage{
+    /*大きさ設定*/
+    height: 60%;
+    object-fit: contain;
+    
+}
+
+.ModalBox button {
+    /*大きさ設定*/
+    width: 50%;
+    min-width: 180px;
+
+    /*背景設定*/
+    background-color: #504FE7;
+
+    /*位置設定*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /*文字設定*/
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 35px;
+}

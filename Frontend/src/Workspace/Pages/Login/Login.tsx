@@ -14,7 +14,7 @@ function Login() {
 
     async function HandleLogin() {
         try {
-            const res = await fetch('/Login/Submit', {
+            const res = await fetch('Login/Submit', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -73,7 +73,7 @@ function Login() {
                         <ConfirmButton label="送信"
                             onClick={() => {
                                 if (userId === "" || password === "") {
-                                    setError("必要事項を入力してください");
+                                    setError("入力が必要です");
                                 } else {
                                     HandleLogin();
                                 }
