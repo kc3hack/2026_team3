@@ -57,9 +57,10 @@ function createFileName(originalName) {
 router.post("/", VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), upload.fields([{ name: "RoomIcon", maxCount: 1 },{ name: "MosaicIcon", maxCount: 1 }]), async (req, res) => {
     try {
       const userID = req.auth.userId;
-      const { RoomName, MosaicName, Password } = req.body;
+    const { RoomName, MosaicName, Password, password } = req.body;
+    const inputPassword = Password ?? password;
       console.log("Received CreateRoom request:", { userID, RoomName, MosaicName, Password });
-      if (!userID || !RoomName || !MosaicName || !Password) {
+    if (!userID || !RoomName || !MosaicName || !inputPassword) {
           console.log("Missing required fields in CreateRoom request");
           return res.status(400).json({ message: "UserID, RoomName, MosaicName, and Password are required" });
       }
@@ -73,7 +74,7 @@ router.post("/", VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), upload.fields([{ 
         "Get Encrypted Private Key","SELECT PrivateKey FROM Identify WHERE userID = ?",[userID]
       );
       const encryptedPrivateKeyObj = JSON.parse(OwnerInfor[0].PrivateKey);
-      const privateKey = decrypt(Password + process.env.PEPPER, encryptedPrivateKeyObj);
+      const privateKey = decrypt(inputPassword + process.env.PEPPER, encryptedPrivateKeyObj);
 
       const { mosaicId, mosaicDefinitionTx, keyPair, facade } = CreateMosaicTx({
         networkType: 'testnet',

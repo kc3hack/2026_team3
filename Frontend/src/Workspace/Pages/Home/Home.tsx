@@ -106,11 +106,11 @@ function Home() {
                 <div className="HomeRoom">
                     {rooms.map((room) => (
                         <RoomButton
-                            key={room.id}
-                            icon={room.RoomIcon || icon}
+                            key={room.RoomName}
+                            icon={`http://localhost:5000${room.RoomIconPath}` || icon}
                             label={room.RoomName}
                             onClick={() => {
-                                navigate(`/room/${room.id}`);
+                                navigate(`/room/${room.RoomName}`);
                             }
                             }
                             type="button"

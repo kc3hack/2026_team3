@@ -73,6 +73,10 @@ app.use(express.urlencoded({ extended: true }));
 // publicフォルダを静的公開
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 保存されたアイコンフォルダを静的配信
+app.use('/icons', express.static(path.join(__dirname, 'icons')));
+
+
 
 // ==========================
 // Routes自動マウント処理
