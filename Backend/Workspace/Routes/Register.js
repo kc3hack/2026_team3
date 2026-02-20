@@ -157,8 +157,11 @@ router.post(
 
       // ユーザーのパスワードから復号可能にする設計
       const encryptedPrivateKey =
-        encrypt(passwordWithPepper, privateKeyString);
-
+        JSON.stringify(
+        encrypt(passwordWithPepper, privateKeyString)
+    );
+    console.log("暗号化された秘密鍵オブジェクト:", privateKeyString);
+    console.log("暗号化された秘密鍵:", encryptedPrivateKey);
 
       // =====================================================
       // 4. パスワードをArgon2でハッシュ化
