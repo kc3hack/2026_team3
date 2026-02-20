@@ -14,7 +14,7 @@ function Register() {
 
     async function HandleLogin() {
         try {
-            const res = await fetch('Login/Submit', {
+            const res = await fetch('/Register/Submit', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -23,17 +23,17 @@ function Register() {
 
             if (!res.ok) {
                 const data = await res.json();
-                toast.error("ログインに失敗しました");
-                console.log("Faild: Login", data);
+                toast.error("登録に失敗しました");
+                console.log("Failed: Register", data);
                 return;
             } else {
-                toast.success("ログインしました");
-                console.log("Success: Login");
+                toast.success("登録しました");
+                console.log("Success: Register");
                 navigate("/Home");
             }
         } catch (err) {
             toast.error('通信エラーが発生しました');
-            console.log("Faild: Communication");
+            console.log("Failed: Communication");
         }
     }
 

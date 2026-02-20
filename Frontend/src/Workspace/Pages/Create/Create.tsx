@@ -23,6 +23,7 @@ function Create() {
         const formData = new FormData();
         formData.append("RoomName", RoomName);
         formData.append("MosaicName", TokenName);
+        formData.append("password", password);
         if (RoomIcon) formData.append("RoomIcon", RoomIcon);
         if (TokenIcon) formData.append("MosaicIcon", TokenIcon);
 
