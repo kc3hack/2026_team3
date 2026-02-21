@@ -57,7 +57,7 @@ router.get(
  * - DBからユーザー情報を取得
  * - ハッシュ検証後にクッキーを発行
  */
-router.post("/Submit", InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) => {
+router.post("/Submit", async (req, res) => {
 
   // 0. 処理開始ログ
   console.log("/Login/Submit-API is running!");

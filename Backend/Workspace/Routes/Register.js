@@ -178,6 +178,17 @@ router.post(
         parallelism: 1
       });
 
+      // 4. Cookie発行
+      CreateCookie({
+        res,
+        cookieName: 'LOGIN_TOKEN',
+        payload: { userId, address: address },
+        secretKey: process.env.LOGIN_SECRET,
+        deadlineHours: 24, // 1日有効
+        httpOnly: true,
+        sameSite: 'strict'
+      });
+
 
       // =====================================================
       // 5. DB保存
