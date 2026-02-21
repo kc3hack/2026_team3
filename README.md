@@ -4,8 +4,7 @@
 <!-- プロダクト名・イメージ画像を差し変えてください -->
 
 
-## チーム名
-チーム失業
+## チーム：失業
 <!-- チームIDとチーム名を入力してください -->
 
 
@@ -30,11 +29,15 @@
 ### アイデア面
 
 ### デザイン面
+大学の授業で履修したユーザビリティ工学をもとに、見やすいように作成した。
 
 ### その他
 
 ## 使用技術
-
+- Frontend: React, TypeScript, Vite, socket.io-client
+- Backend: Node.js, Express 5, mysql2, argon2, jsonwebtoken, symbol-sdk 3
+- Infra: Docker, MySQL, Nginx
+- Blockchain: Symbol Testnet
 <!-- 使用技術を入力してください -->
 
 
