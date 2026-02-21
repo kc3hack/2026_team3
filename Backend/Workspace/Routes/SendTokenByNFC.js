@@ -105,6 +105,16 @@ router.post('/NFC/Submit/:roomName', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET
             return res.status(400).json({ message: '不正なパラメータです' });
         }
 
+        const recipientUser = await DBPerf(
+            "送金先ユーザー解決",
+            "SELECT UserID FROM Identify WHERE UserID = ? OR Address = ? LIMIT 1",
+            [sendtoUserID, sendtoUserID]
+        );
+        if (!recipientUser.length) {
+            return res.status(404).json({ message: '送金先ユーザーが見つかりません' });
+        }
+        const resolvedSendtoUserID = recipientUser[0].UserID;
+
         let targetRoomName = parsedRoomName;
         if (targetRoomName) {
             const joinedRoom = await DBPerf(
@@ -123,11 +133,20 @@ router.post('/NFC/Submit/:roomName', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET
             targetRoomName = room[0].RoomName;
         }
 
+        const recipientJoinedRoom = await DBPerf(
+            "送金先所属Room確認",
+            "SELECT 1 FROM Rooms WHERE userID = ? AND RoomName = ?",
+            [resolvedSendtoUserID, targetRoomName]
+        );
+        if (!recipientJoinedRoom.length) {
+            return res.status(403).json({ message: '送金先ユーザーはこのルームに参加していません' });
+        }
+
         const reservationID = crypto.randomUUID();
 
         pendingTransfers.set(reservationID, {
             fromUserID,
-            sendtoUserID,
+            sendtoUserID: resolvedSendtoUserID,
             roomName: targetRoomName,
             Amount: parsedAmount,
             updatedAt: Date.now(),
@@ -185,6 +204,15 @@ router.post('/NFC', async (req, res) => {
 
     try {
         const { fromUserID, sendtoUserID, Amount, roomName } = transfer;
+
+        const recipientJoinedRoom = await DBPerf(
+            "送金先所属Room再確認",
+            "SELECT 1 FROM Rooms WHERE userID = ? AND RoomName = ?",
+            [sendtoUserID, roomName]
+        );
+        if (!recipientJoinedRoom.length) {
+            throw new Error("送金先ユーザーはこのルームに参加していません");
+        }
 
         // A. カード所有者確認
         const cardUser = await DBPerf("UID確認", "SELECT userID FROM NFC WHERE UID = ?", [uid]);

@@ -85,7 +85,7 @@ function Payment() {
 
             if (!res.ok) {
                 const data = await res.json();
-                toast.error("NFC受付の準備に失敗しました");
+                toast.error(data?.message || "NFC受付の準備に失敗しました");
                 console.log("Faild: NFC Reserve", data);
                 return false;
             } else {
