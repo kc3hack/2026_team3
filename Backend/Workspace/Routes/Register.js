@@ -21,6 +21,7 @@ import { PrivateKey } from 'symbol-sdk';
 import DBPerf from '../Tools/DBPerf.js';          // DB実行ラッパー
 import InverseVCM from '../Tools/InverseVCM.js';  // 未ログイン専用ミドルウェア
 import { encrypt } from '../Tools/AESControl.js'; // AES暗号化関数
+import CreateCookie from '../Tools/CreateCookie.js'; // クッキー作成関数
 
 
 // ==========================
