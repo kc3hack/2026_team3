@@ -82,7 +82,7 @@ router.post("/", VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), upload.fields([{ 
       const { mosaicId, mosaicDefinitionTx, keyPair, facade } = CreateMosaicTx({
         networkType: 'testnet',
         senderPrivateKey: privateKey,
-        transferable: false,
+        transferable: true,
         deadlineHours: 24
       });
 

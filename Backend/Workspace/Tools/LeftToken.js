@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const DEFAULT_TESTNET_CURRENCY_MOSAIC_ID = '72C0212E67A08BCE';
+
 export async function LeftToken(address, nodeUrl) {
     try {
         const result = await axios.get(`${nodeUrl}/accounts/${address}`);
@@ -42,4 +44,21 @@ export async function LeftTokenAmount(address, mosaicIdHex, nodeUrl) {
     console.log(`[Debug] LeftTokenAmount - Target Mosaic Found:`, target);
 
     return target ? BigInt(target.amount) : 0n;
+}
+
+export async function GetCurrencyMosaicId(nodeUrl) {
+    try {
+        const result = await axios.get(`${nodeUrl}/network/currencyMosaicId`);
+        const rawId = result?.data?.mosaicId;
+        if (!rawId) {
+            return DEFAULT_TESTNET_CURRENCY_MOSAIC_ID;
+        }
+
+        return String(rawId)
+            .replace(/^0x/, '')
+            .toUpperCase();
+    } catch (err) {
+        console.warn('[Warn] Failed to fetch currency mosaic id. Fallback to testnet default.', err?.message);
+        return DEFAULT_TESTNET_CURRENCY_MOSAIC_ID;
+    }
 }
