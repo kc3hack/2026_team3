@@ -36,10 +36,7 @@ router.use(express.json());
  * - ログイン済みの場合はアクセス拒否（InverseVCM）
  * - ログイン画面を返却
  */
-router.get(
-  '/',
-  InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET),
-  (req, res) => {
+router.get('/',(req, res) => {
     console.log("/Login-API is running");
     res.sendFile(
       path.join(__dirname, "..", "..", "..", "Frontend", "dist", "index.html")

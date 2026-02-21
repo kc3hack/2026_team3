@@ -60,12 +60,7 @@ router.use(express.json());
 // 画面表示API
 // =====================================================================
 
-router.get(
-  '/',
-  // 既にログインしている場合はアクセス拒否するミドルウェア
-  InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET),
-
-  (req, res) => {
+router.get('/',(req, res) => {
     console.log("/Register-API is running");
 
     // フロントエンドのビルド済みHTMLを返す
@@ -80,13 +75,7 @@ router.get(
 // ユーザー登録処理
 // =====================================================================
 
-router.post(
-  '/Submit',
-
-  // ログイン済みなら拒否
-  InverseVCM('LOGIN_TOKEN', process.env.LOGIN_SECRET),
-
-  async (req, res) => {
+router.post('/Submit',async (req, res) => {
 
     console.log("Submit-API is running");
 
