@@ -78,7 +78,7 @@ function Home() {
                 <div className="HomeLeft">
                     <h1>ルーム</h1>
                     {/* ログインボタンいらないならここをコメントアウト */}
-                    <ConfirmButton label="ログイン" onClick={() => navigate("/Login")} type="button" />
+                    <ConfirmButton label="アカウント" onClick={() => navigate("/Login")} type="button" />
                 </div>
                 <div className="HomeRight">
                     <ConfirmButton label="NFC" onClick={() => navigate("/NFC")} type="button" />

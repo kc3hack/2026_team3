@@ -258,6 +258,7 @@ form {
 .ModalPassBox button {
     /*大きさ設定*/
     width: 50%;
+    height: 70%;
 
     /*背景設定*/
     background-color: #504FE7;

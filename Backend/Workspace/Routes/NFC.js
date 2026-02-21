@@ -20,7 +20,7 @@ router.post('/Submit', async (req, res) => {
         const { userID, userId, password } = req.body;
         const normalizedUserID = userID ?? userId;
         // 【修正】後で true を代入するため、const ではなく let に変更しました
-        let nfcRead = false; 
+        let nfcRead = false;
 
         if (!latestcardTime || Date.now() - latestcardTime > 10000) {
             return res.status(400).send("カードをもう一度かざしてください");
@@ -41,16 +41,23 @@ router.post('/Submit', async (req, res) => {
         // カードが既に紐づけられていないかの確認
         const exitUid = await DBPerf("カードが既に紐づけられていないかの確認", "SELECT * FROM NFC WHERE UID = ?", [latestcardUid]);
         if (exitUid.length != 0) {
-            console.log("このカードは既に紐づけられています！");
-            return res.status(400).send({ message: 'This card is already linked to an account' });
+            await DBPerf(
+                "カード上書き",
+                `INSERT INTO NFC (UID, UserID) VALUES (?, ?)
+                 ON DUPLICATE KEY UPDATE UserID = VALUES(UserID)`,
+                [latestcardUid, normalizedUserID]
+            );
+
+            console.log("このカードのアカウントを上書きしました");
+            return res.status(200).send({ message: 'This card is updated' });
         }
 
         // ユーザーIDが存在するかの確認とパスワードの照合
         const userInfor = await DBPerf("存在するアカウントかの確認", "SELECT UserID, Password FROM Identify WHERE UserID = ?", [normalizedUserID]);
-        
+
         // ユーザーIDが存在しない場合はダミーパスワードと照合して常に失敗させる（セキュリティ対策）
         const comparePassword = userInfor.length == 0 ? process.env.DUMMY_PASSWORD : userInfor[0].Password;
-        
+
         if (await argon2.verify(comparePassword, password + process.env.PEPPER)) {
             // アカウントとNFCカードの紐づけ
             await DBPerf("アカウントとNFCカードの紐づけ", "INSERT INTO NFC (UID, UserID) VALUES (?, ?)", [latestcardUid, normalizedUserID]);
