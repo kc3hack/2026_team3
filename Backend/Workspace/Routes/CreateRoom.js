@@ -13,6 +13,8 @@ import VCM from '../Tools/VCM.js';
 import DBPerf from '../Tools/DBPerf.js';
 import { decrypt } from '../Tools/AESControl.js';
 import { CreateMosaicTx } from '../Tools/CreateMosaicTx.js';
+import { CreateSupplyTx } from '../Tools/SupplyMosaic.js';
+import SignAndAnnounce from '../Tools/SignAndAnnounce.js';
 
 // 注意2: ESMでは __dirname がデフォルトで存在しないため、自作する必要があります
 const __filename = fileURLToPath(import.meta.url);
@@ -76,12 +78,41 @@ router.post("/", VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), upload.fields([{ 
       const encryptedPrivateKeyObj = JSON.parse(OwnerInfor[0].PrivateKey);
       const privateKey = decrypt(inputPassword + process.env.PEPPER, encryptedPrivateKeyObj);
 
+      // ===== Mosaic定義トランザクション作成 =====
       const { mosaicId, mosaicDefinitionTx, keyPair, facade } = CreateMosaicTx({
         networkType: 'testnet',
         senderPrivateKey: privateKey,
         transferable: false,
         deadlineHours: 24
       });
+
+      // ===== DBに保存する前に、モザイクをブロックチェーンに登録 =====
+      try {
+        console.log("[CreateRoom] Announcing Mosaic Definition Transaction...");
+        await SignAndAnnounce(mosaicDefinitionTx, privateKey, facade, 'https://sym-test-01.opening-line.jp:3001');
+        console.log("[CreateRoom] Mosaic Definition TX Announced Successfully!");
+
+        // ===== 供給量設定トランザクション作成・送信 =====
+        console.log("[CreateRoom] Creating Supply Change Transaction...");
+        const { supplyTx, keyPair: supplyKeyPair, facade: supplyFacade } = CreateSupplyTx({
+          networkType: 'testnet',
+          senderPrivateKey: privateKey,
+          mosaicId: mosaicId,
+          supply: 1_000_000n,  // 初期供給量：100万（divisibility=0なので実際の量）
+          deadlineHours: 24
+        });
+
+        console.log("[CreateRoom] Announcing Supply Change Transaction...");
+        await SignAndAnnounce(supplyTx, privateKey, supplyFacade, 'https://sym-test-01.opening-line.jp:3001');
+        console.log("[CreateRoom] Supply Change TX Announced Successfully!");
+
+      } catch (txErr) {
+        console.error("[CreateRoom] Blockchain Transaction Error:", txErr);
+        return res.status(500).json({ 
+          message: "Failed to register mosaic on blockchain",
+          error: txErr.message 
+        });
+      }
 
       const RoomIconPath = await saveIcon(req.files.RoomIcon[0], "rooms");
       console.log("RoomIcon saved at:", RoomIconPath);

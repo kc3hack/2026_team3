@@ -39,7 +39,7 @@ function Home() {
     //ルーム参加送信
     async function HandleHome() {
         try {
-            const res = await fetch('/CreateRoom', {
+            const res = await fetch('/JoinRoom', {
                 method: 'POST',
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -49,11 +49,11 @@ function Home() {
             if (!res.ok) {
                 const data = await res.json();
                 toast.error("ルーム参加に失敗しました");
-                console.log("Faild: Create room", data);
+                console.log("Failed: Join room", data);
                 return;
             } else {
                 toast.success("ルームに参加しました");
-                console.log("Success: Cerate room");
+                console.log("Success: Join room");
 
                 //参加したルームを追加
                 const updated = await fetch("/RoomList", {
@@ -68,7 +68,7 @@ function Home() {
             }
         } catch (err) {
             toast.error('通信エラーが発生しました');
-            console.log("Faild: Communication");
+            console.log("Failed: Communication");
         }
     }
 
@@ -76,8 +76,9 @@ function Home() {
         <div className="HomeBackground">
             <div className="HomeTab">
                 <div className="HomeLeft">
-                    <img src={icon} className="HomeIcon" alt="" />
                     <h1>ルーム</h1>
+                    {/* ログインボタンいらないならここをコメントアウト */}
+                    <ConfirmButton label="ログイン" onClick={() => navigate("/Login")} type="button" />
                 </div>
                 <div className="HomeRight">
                     <ConfirmButton label="NFC" onClick={() => navigate("/NFC")} type="button" />
@@ -110,7 +111,11 @@ function Home() {
                             icon={`http://localhost:5000${room.RoomIconPath}` || icon}
                             label={room.RoomName}
                             onClick={() => {
-                                navigate(`/room/${room.RoomName}`);
+<<<<<<< HEAD
+                                navigate(`/Payment/${room.RoomName}`);
+=======
+                                navigate(`/Payment/${encodeURIComponent(room.RoomName)}`);
+>>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
                             }
                             }
                             type="button"

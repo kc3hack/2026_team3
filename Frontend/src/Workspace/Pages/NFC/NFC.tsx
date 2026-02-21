@@ -2,6 +2,7 @@ import "./NFC.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { io } from "socket.io-client";
 import InputField from "../../Components/InputField/InputField";
 import ConfirmButton from "../../Components/ConfirmButton/ConfirmButton";
 import icon from "../../Components/Elements/icon.png";
@@ -16,7 +17,7 @@ function NFC() {
 
     async function HandleNFC() {
         try {
-            const res = await fetch('NFC/Submit', { 
+            const res = await fetch('/NFC/Submit', { 
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -27,40 +28,44 @@ function NFC() {
                 const data = await res.json();
                 toast.error("登録に失敗しました");
                 console.log("Faild: SendToken", data);
-                return;
+                return false;
             } else {
                 toast.success("NFCを登録しました");
                 console.log("Success: SendToken");
+                return true;
             }
         } catch (err) {
             toast.error('通信エラーが発生しました');
             console.log("Faild: Communication");
+            return false;
         }
     }
 
-    useEffect(() => { //NFC受信
+    useEffect(() => {
         if (!showModal) return;
 
-        //ポーリング
-        const interval = setInterval(async () => {
+        const socket = io('/', {
+            transports: ['websocket'],
+        });
+
+        const onDetected = async () => {
             try {
-            const res = await fetch("/NFC/Submit", {
-                credentials: "include"
-            });
-
-            const data = await res.json();
-
-            if (data.nfcRead === true) {
                 setShowModal(false);
-                clearInterval(interval);
-                HandleNFC();
+                const isSuccess = await HandleNFC();
+                if (isSuccess) {
+                    navigate('/Home');
+                }
+            } catch (e) {
+                console.log("NFC handle error:", e);
             }
-        } catch (e) {
-            console.log("Polling error:", e);
-            //toast.error('通信エラーが発生しました');
-        }}, 1000); // 1秒ごと
+        };
 
-        return () => clearInterval(interval);
+        socket.on('nfc:detected', onDetected);
+
+        return () => {
+            socket.off('nfc:detected', onDetected);
+            socket.disconnect();
+        };
 
     }, [showModal]);
 

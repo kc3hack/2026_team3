@@ -20,6 +20,8 @@ import fs from 'fs';               // ファイルシステム操作
 import dotenv from 'dotenv';       // .env読み込み
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';  // __dirname再現用
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 
 
 // ==========================
@@ -46,6 +48,15 @@ dotenv.config({
 // ==========================
 
 const app = express();
+const server = http.createServer(app);
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: '*',
+  },
+});
+
+globalThis.io = io;
+app.set('io', io);
 
 
 // ==========================
@@ -117,6 +128,6 @@ fs.readdirSync(routesDir).forEach(async (file) => {
 // サーバー起動
 // ==========================
 
-app.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

@@ -149,6 +149,10 @@ router.post(
       // パスワード + Pepper
       // PepperはDBに保存しないサーバー専用秘密値
       const passwordWithPepper = password + pepper;
+      console.log("パスワードとペッパーを結合した文字列:", passwordWithPepper);
+
+      const encryptPassword = encrypt(process.env.PEPPER, password);
+      console.log("暗号化されたパスワード:", encryptPassword);
 
 
       // =====================================================

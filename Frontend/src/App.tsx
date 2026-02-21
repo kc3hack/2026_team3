@@ -18,7 +18,11 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/NFC" element={<NFC />} />
-          <Route path="/Payment" element={<Payment />} />
+<<<<<<< HEAD
+          <Route path="/Payment/:roomId" element={<Payment />} />
+=======
+          <Route path="/Payment/:roomName" element={<Payment />} /> 
+>>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
           <Route path="/Create" element={<Create />} />
         </Routes>
       </BrowserRouter>
