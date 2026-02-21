@@ -87,7 +87,7 @@ function Payment() {
                 const data = await res.json();
                 setReservationID(data.reservationID);
                 setNFCModal(true);
-                toast.success("NFC受付を開始しました。次々とカードをかざしてください！");
+                toast.success("NFC受付を開始しました。カードをかざしてください！");
                 return true;
             }
         } catch (err) {
@@ -182,7 +182,7 @@ function Payment() {
                         </div>
                         {error && <p className="PaymentError" style={{textAlign: "center"}}>{error}</p>}
                     </div>
-                    <ConfirmButton label="受付開始 (改札モード)" onClick={() => {
+                    <ConfirmButton label="登録" onClick={() => {
                         if (address === "" || token === 0) setError("入力が必要です");
                         else if (isNaN(Number(token)) || Number(token) <= 0) setError("支払額は正の数を入力してください");
                         else HandleReserveForNFC();
@@ -193,9 +193,9 @@ function Payment() {
             {nfcModal && (
                 <div className="ModalBackground">
                     <div className="ModalBox">
-                        <p>NFC受付中...<br/><span style={{fontSize: "0.8em"}}>カードを次々とかざしてください</span></p>
+                        <p>NFC受付中...<br/><span style={{fontSize: "0.8em"}}>カードをかざしてください</span></p>
                         <img src={NFCimage} className="NFCimage" alt="" />
-                        <ConfirmButton label="受付を終了する" onClick={() => { 
+                        <ConfirmButton label="終了する" onClick={() => { 
                             setNFCModal(false);
                             setReservationID(""); // セッションをリセット
                         }} type="button" />
