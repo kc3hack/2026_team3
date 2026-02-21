@@ -6,6 +6,7 @@ export default function CreateTransferTx({
     senderPrivateKey,
     recipientRawAddress,
     messageText = '',
+    fee = 100_000n,
     mosaics = [],
     deadlineHours = 2,
 }) {
@@ -40,6 +41,7 @@ export default function CreateTransferTx({
     const createTransferTx = facade.transactionFactory.create({
         type: 'transfer_transaction_v1',
         signerPublicKey: keyPair.publicKey,
+        fee: BigInt(fee),
         recipientAddress: recipientRawAddress,
         mosaics,
         message,

@@ -7,7 +7,7 @@ import VCM from '../Tools/VCM.js'; // VCM.jsから修正が必要な場合は適
 import { decrypt } from '../Tools/AESControl.js';       // named exportから default export に合わせました
 import CreateTransferTx from '../Tools/CreateTransferTx.js';
 import SignAndAnnounce from '../Tools/SignAndAnnounce.js';
-import { LeftTokenAmount } from '../Tools/LeftToken.js';
+import { LeftTokenAmount, GetCurrencyMosaicId } from '../Tools/LeftToken.js';
 import argon2 from 'argon2';
 
 const router = express.Router();
@@ -18,14 +18,28 @@ const router = express.Router();
 router.get('/', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) => {
     try {
         const userId = req.auth.userId;
+        const inputRoomName = typeof req.query?.roomName === 'string' ? req.query.roomName.trim() : '';
         if (!userId) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        const room = await DBPerf("Room取得", "SELECT RoomName FROM Rooms WHERE userID = ?", [userId]);
-        if (!room.length) throw new Error("Room が見つかりません");
+        let targetRoomName = inputRoomName;
+        if (targetRoomName) {
+            const joinedRoom = await DBPerf(
+                "所属Room確認",
+                "SELECT RoomName FROM Rooms WHERE userID = ? AND RoomName = ?",
+                [userId, targetRoomName]
+            );
+            if (!joinedRoom.length) {
+                return res.status(404).json({ message: '指定ルームに所属していません' });
+            }
+        } else {
+            const room = await DBPerf("Room取得", "SELECT RoomName FROM Rooms WHERE userID = ? ORDER BY RoomName LIMIT 1", [userId]);
+            if (!room.length) throw new Error("Room が見つかりません");
+            targetRoomName = room[0].RoomName;
+        }
 
-        const mosaicName = await DBPerf("Mosaic名取得", "SELECT MosaicName FROM RoomDetails WHERE RoomName = ?", [room[0].RoomName]);
+        const mosaicName = await DBPerf("Mosaic名取得", "SELECT MosaicName FROM RoomDetails WHERE RoomName = ?", [targetRoomName]);
         if (!mosaicName.length) throw new Error("Mosaic が見つかりません");
 
         const mosaicIdList = await DBPerf("MosaicID取得", "SELECT MosaicID FROM Mosaic WHERE MosaicName = ?", [mosaicName[0].MosaicName]);
@@ -42,7 +56,12 @@ router.get('/', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) =
 
         const balance = await LeftTokenAmount(userAddress, targetMosaicId, nodeUrl);
 
-        return res.status(200).json({ HandToken: Number(balance) });
+        return res.status(200).json({
+            roomName: targetRoomName,
+            mosaicName: mosaicName[0].MosaicName,
+            mosaicId: targetMosaicId,
+            handToken: Number(balance)
+        });
 
     } catch (error) {
         console.error('Get Balance Error:', error);
@@ -71,14 +90,35 @@ setInterval(() => {
 // ==============================
 // 1. 予約作成 (Web画面から「受付開始」)
 // ==============================
-router.post('/NFC/Submit', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) => {
+router.post('/NFC/Submit/:roomName', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) => {
     try {
         const { sendtoUserID, Amount } = req.body;
+        const roomName = req.params.roomName;
         const fromUserID = req.auth.userId;
         const parsedAmount = Number(Amount);
+        const parsedRoomName = typeof roomName === 'string' ? roomName.trim() : '';
+        console.log("/NFC/Submit-API is running!", { fromUserID, sendtoUserID, Amount, roomName });
 
         if (!sendtoUserID || Number.isNaN(parsedAmount) || parsedAmount <= 0 || !Number.isInteger(parsedAmount)) {
             return res.status(400).json({ message: '不正なパラメータです' });
+        }
+
+        let targetRoomName = parsedRoomName;
+        if (targetRoomName) {
+            const joinedRoom = await DBPerf(
+                "所属Room確認",
+                "SELECT RoomName FROM Rooms WHERE userID = ? AND RoomName = ?",
+                [fromUserID, targetRoomName]
+            );
+            if (!joinedRoom.length) {
+                return res.status(404).json({ message: '指定ルームに所属していません' });
+            }
+        } else {
+            const room = await DBPerf("Room取得", "SELECT RoomName FROM Rooms WHERE userID = ? ORDER BY RoomName LIMIT 1", [fromUserID]);
+            if (!room.length) {
+                return res.status(404).json({ message: 'Room が見つかりません' });
+            }
+            targetRoomName = room[0].RoomName;
         }
 
         const reservationID = crypto.randomUUID();
@@ -86,6 +126,7 @@ router.post('/NFC/Submit', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (
         pendingTransfers.set(reservationID, {
             fromUserID,
             sendtoUserID,
+            roomName: targetRoomName,
             Amount: parsedAmount,
             updatedAt: Date.now(),
             processedUids: {} // 【追加】二重引き落とし防止のための履歴
@@ -95,7 +136,8 @@ router.post('/NFC/Submit', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (
 
         return res.status(200).json({
             message: "受付を開始しました",
-            reservationID
+            reservationID,
+            roomName: targetRoomName
         });
 
     } catch (error) {
@@ -140,7 +182,7 @@ router.post('/NFC', async (req, res) => {
     transfer.updatedAt = now;
 
     try {
-        const { fromUserID, sendtoUserID, Amount } = transfer;
+        const { fromUserID, sendtoUserID, Amount, roomName } = transfer;
 
         // A. カード所有者確認
         const cardUser = await DBPerf("UID確認", "SELECT userID FROM NFC WHERE UID = ?", [uid]);
@@ -158,8 +200,7 @@ router.post('/NFC', async (req, res) => {
         const SendToAddress = toUserInfor[0].Address;
 
         // D. モザイク情報
-        const roomName = await DBPerf("Room取得", "SELECT RoomName FROM Rooms WHERE userID = ?", [fromUserID]);
-        const mosaicName = await DBPerf("Mosaic名取得", "SELECT MosaicName FROM RoomDetails WHERE RoomName = ?", [roomName[0].RoomName]);
+        const mosaicName = await DBPerf("Mosaic名取得", "SELECT MosaicName FROM RoomDetails WHERE RoomName = ?", [roomName]);
         const mosaicIDList = await DBPerf("MosaicID取得", "SELECT MosaicID FROM Mosaic WHERE MosaicName = ?", [mosaicName[0].MosaicName]);
         const MosaicIDHex = mosaicIDList[0].MosaicID; 
         const nodeUrl = 'https://sym-test-01.opening-line.jp:3001';
@@ -170,7 +211,14 @@ router.post('/NFC', async (req, res) => {
         const currentAmount = await LeftTokenAmount(fromAddressInfo[0].Address, MosaicIDHex, nodeUrl);
         const transferAmount = BigInt(Amount);
         if (currentAmount < transferAmount) {
-            throw new Error("残高不足です");
+            throw new Error(`残高不足です: 必要=${transferAmount.toString()} / 保有=${currentAmount.toString()}`);
+        }
+
+        const currencyMosaicId = await GetCurrencyMosaicId(nodeUrl);
+        const xymAmount = await LeftTokenAmount(fromAddressInfo[0].Address, currencyMosaicId, nodeUrl);
+        const transferFee = 100_000n;
+        if (xymAmount < transferFee) {
+            throw new Error(`手数料用XYM不足です: 必要=${transferFee.toString()} / 保有=${xymAmount.toString()}`);
         }
 
         // ブロックチェーン処理
@@ -207,6 +255,7 @@ router.post('/NFC', async (req, res) => {
             senderPrivateKey: decryptedPrivateKey,
             recipientRawAddress: SendToAddress,
             messageText: `Payment via NFC Gate`,
+            fee: transferFee,
             mosaics: [
                 { 
                     mosaicId: BigInt(`0x${MosaicIDHex}`), 
@@ -216,7 +265,11 @@ router.post('/NFC', async (req, res) => {
             deadlineHours: 2,
         });
 
-        await SignAndAnnounce(tx, decryptedPrivateKey, facade, nodeUrl);
+        const announceResult = await SignAndAnnounce(tx, decryptedPrivateKey, facade, nodeUrl, {
+            waitForConfirmation: true,
+            confirmationTimeoutMs: 120000,
+            pollIntervalMs: 2000
+        });
 
         console.log(`[Success] Gate Transfer. User:${fromUserID} -> ${sendtoUserID}, Amount:${Amount}, UID:${uid}`);
         
@@ -224,7 +277,7 @@ router.post('/NFC', async (req, res) => {
         
         // フロントエンドに「成功したよ」とリアルタイム通知
         if (io) {
-            io.emit('payment:result', { reservationID, status: 'success', uid });
+            io.emit('payment:result', { reservationID, status: 'success', uid, hash: announceResult.hash });
         }
 
         return res.status(200).send("送金完了");

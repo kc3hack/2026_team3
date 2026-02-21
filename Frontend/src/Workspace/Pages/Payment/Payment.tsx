@@ -68,13 +68,14 @@ function Payment() {
     // 連続決済用のセッション(予約)を作成する
     async function HandleReserveForNFC() {
         try {
-            const res = await fetch('/SendTokenByNFC/NFC/Submit', {
+            const res = await fetch(`/SendTokenByNFC/NFC/Submit/${decodedRoomName}`, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({
                     sendtoUserID: address,
                     Amount: token,
+                    roomName: decodedRoomName
                 }),
             });
 
