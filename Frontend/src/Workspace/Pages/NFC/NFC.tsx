@@ -62,11 +62,8 @@ function NFC() {
 
     const onDetected = async () => {
       try {
+        await HandleNFC();
         setShowModal(false);
-        const isSuccess = await HandleNFC();
-        if (isSuccess) {
-          navigate("/Home");
-        }
       } catch (e) {
         console.log("NFC handle error:", e);
       }

@@ -18,6 +18,7 @@ function Create() {
     const [password, setPassword] = useState("");
     const [passModal, setPassModal] = useState(false);
     const [error, setError] = useState("");
+    const [showModal, setShowModal] = useState(false);
 
     async function HandleCreate() {
         const formData = new FormData();
@@ -187,12 +188,26 @@ function Create() {
                                         setPassModal(false)
                                         HandleCreate();
                                         HandlePass();
-                                        navigate("/Home");
+                                        setShowModal(true);
                                     }
-                                }}type="button" />
+                                }} type="button" />
 
-                                <ConfirmButton label="戻る" onClick={() => {setPassModal(false)}}type="button" />
+                                <ConfirmButton label="戻る" onClick={() => { setPassModal(false) }} type="button" />
                             </div>
+                        </div>
+                    </div>
+                )}
+                {showModal && (
+                    <div className="ModalBackground">
+                        <div className="ModalSpin">
+                            <p>ルーム追加中…</p>
+                            <div className="Spinner"></div>
+                            <button type="button"
+                                onClick={() => {
+                                    setShowModal(false)
+                                    navigate("/Create");
+                                }}
+                            >キャンセル</button>
                         </div>
                     </div>
                 )}
