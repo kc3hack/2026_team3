@@ -19,6 +19,7 @@ router.get('/', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) =
     try {
         const userId = req.auth.userId;
         const inputRoomName = typeof req.query?.roomName === 'string' ? req.query.roomName.trim() : '';
+        console.log("/Balance-API is running!", { userId, inputRoomName });
         if (!userId) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
@@ -55,6 +56,7 @@ router.get('/', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (req, res) =
         const nodeUrl = 'https://sym-test-01.opening-line.jp:3001';
 
         const balance = await LeftTokenAmount(userAddress, targetMosaicId, nodeUrl);
+        console.log(`[Debug] User:${userId}, Address:${userAddress}, MosaicID:${targetMosaicId}, Balance:${balance.toString()}`);
 
         return res.status(200).json({
             roomName: targetRoomName,
@@ -213,6 +215,7 @@ router.post('/NFC', async (req, res) => {
         if (currentAmount < transferAmount) {
             throw new Error(`残高不足です: 必要=${transferAmount.toString()} / 保有=${currentAmount.toString()}`);
         }
+        console.log(`[Debug] Current Balance: ${currentAmount.toString()}, Transfer Amount: ${transferAmount.toString()}`);
 
         const currencyMosaicId = await GetCurrencyMosaicId(nodeUrl);
         const xymAmount = await LeftTokenAmount(fromAddressInfo[0].Address, currencyMosaicId, nodeUrl);

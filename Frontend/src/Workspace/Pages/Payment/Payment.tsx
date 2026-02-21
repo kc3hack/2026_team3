@@ -24,7 +24,8 @@ function Payment() {
     useEffect(() => {
         async function fetchToken() {
             try {
-                const res = await fetch("/SendTokenByNFC/", {
+                const query = decodedRoomName ? `?roomName=${encodeURIComponent(decodedRoomName)}` : "";
+                const res = await fetch(`/SendTokenByNFC/${query}`, {
                     method: 'GET',
                     credentials: "include"
                 });
@@ -33,31 +34,34 @@ function Payment() {
                     return;
                 }
                 const data = await res.json();
-                setHandToken(data.HandToken);
+                setHandToken(Number(data.handToken ?? 0));
             } catch (err) {
                 toast.error("通信エラー");
             }
         }
         fetchToken();
-    }, []);
+    }, [decodedRoomName]);
 
     useEffect(() => {
         async function fetchRooms() {
             if (!decodedRoomName) return;
 
             try {
-                const res = await fetch('/SendTokenByNFC/', {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ roomName: decodedRoomName }),
+                const res = await fetch('/RoomList/', {
+                    method: 'GET',
+                    credentials: "include"
                 });
                 if (!res.ok) {
                     toast.error("ルーム情報の取得に失敗しました");
                     return;
                 }
                 const data = await res.json();
-                setRoomIcon(data.roomIcon);
+                const room = Array.isArray(data.RoomList)
+                    ? data.RoomList.find((item: { RoomName: string; RoomIconPath: string }) => item.RoomName === decodedRoomName)
+                    : null;
+                if (room?.RoomIconPath) {
+                    setRoomIcon(room.RoomIconPath);
+                }
             } catch (err) {
                 toast.error("通信エラー");
             }
