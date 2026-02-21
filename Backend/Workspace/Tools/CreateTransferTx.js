@@ -24,7 +24,8 @@ export default function CreateTransferTx({
     const keyPair = facade.createAccount(privateKeyObject);
     
     // Deadline 作成 (v3のfromDatetimeはDateオブジェクトを受け取ります)
-    const deadline = facade.network.fromDatetime(new Date()).addHours(Number(deadlineHours)).timestamp;
+    const safeDeadlineHours = Math.min(Math.max(Number(deadlineHours) || 2, 1), 2);
+    const deadline = facade.network.fromDatetime(new Date()).addHours(safeDeadlineHours).timestamp;
     console.log(`[${logOwner}] Intermediate => KeyPair created, Deadline calculated`);
 
     // メッセージの作成

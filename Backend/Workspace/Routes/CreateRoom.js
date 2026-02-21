@@ -89,7 +89,18 @@ router.post("/", VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), upload.fields([{ 
       // ===== DBに保存する前に、モザイクをブロックチェーンに登録 =====
       try {
         console.log("[CreateRoom] Announcing Mosaic Definition Transaction...");
-        await SignAndAnnounce(mosaicDefinitionTx, privateKey, facade, 'https://sym-test-01.opening-line.jp:3001');
+        const definitionResult = await SignAndAnnounce(
+          mosaicDefinitionTx,
+          privateKey,
+          facade,
+          'https://sym-test-01.opening-line.jp:3001',
+          {
+            waitForConfirmation: true,
+            confirmationTimeoutMs: 180000,
+            pollIntervalMs: 2000
+          }
+        );
+        console.log("[CreateRoom] Mosaic Definition TX Hash:", definitionResult.hash);
         console.log("[CreateRoom] Mosaic Definition TX Announced Successfully!");
 
         // ===== 供給量設定トランザクション作成・送信 =====
@@ -103,7 +114,18 @@ router.post("/", VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), upload.fields([{ 
         });
 
         console.log("[CreateRoom] Announcing Supply Change Transaction...");
-        await SignAndAnnounce(supplyTx, privateKey, supplyFacade, 'https://sym-test-01.opening-line.jp:3001');
+        const supplyResult = await SignAndAnnounce(
+          supplyTx,
+          privateKey,
+          supplyFacade,
+          'https://sym-test-01.opening-line.jp:3001',
+          {
+            waitForConfirmation: true,
+            confirmationTimeoutMs: 180000,
+            pollIntervalMs: 2000
+          }
+        );
+        console.log("[CreateRoom] Supply Change TX Hash:", supplyResult.hash);
         console.log("[CreateRoom] Supply Change TX Announced Successfully!");
 
       } catch (txErr) {

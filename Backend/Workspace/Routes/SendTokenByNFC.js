@@ -75,8 +75,9 @@ router.post('/NFC/Submit', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (
     try {
         const { sendtoUserID, Amount } = req.body;
         const fromUserID = req.auth.userId;
+        const parsedAmount = Number(Amount);
 
-        if (!sendtoUserID || !Amount || isNaN(Amount)) {
+        if (!sendtoUserID || Number.isNaN(parsedAmount) || parsedAmount <= 0 || !Number.isInteger(parsedAmount)) {
             return res.status(400).json({ message: '不正なパラメータです' });
         }
 
@@ -85,7 +86,7 @@ router.post('/NFC/Submit', VCM('LOGIN_TOKEN', process.env.LOGIN_SECRET), async (
         pendingTransfers.set(reservationID, {
             fromUserID,
             sendtoUserID,
-            Amount,
+            Amount: parsedAmount,
             updatedAt: Date.now(),
             processedUids: {} // 【追加】二重引き落とし防止のための履歴
         });
@@ -167,7 +168,7 @@ router.post('/NFC', async (req, res) => {
         if (!fromAddressInfo.length) throw new Error("送金元アドレスが見つかりません");
 
         const currentAmount = await LeftTokenAmount(fromAddressInfo[0].Address, MosaicIDHex, nodeUrl);
-        const transferAmount = BigInt(Amount) * 1_000_000n;
+        const transferAmount = BigInt(Amount);
         if (currentAmount < transferAmount) {
             throw new Error("残高不足です");
         }
@@ -205,11 +206,11 @@ router.post('/NFC', async (req, res) => {
             networkType: 'testnet',
             senderPrivateKey: decryptedPrivateKey,
             recipientRawAddress: SendToAddress,
-            message: `Payment via NFC Gate`,
+            messageText: `Payment via NFC Gate`,
             mosaics: [
                 { 
                     mosaicId: BigInt(`0x${MosaicIDHex}`), 
-                    amount: BigInt(Amount) * 1_000_000n 
+                    amount: BigInt(Amount)
                 }
             ],
             deadlineHours: 2,

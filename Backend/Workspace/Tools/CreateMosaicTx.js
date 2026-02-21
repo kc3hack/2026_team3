@@ -8,6 +8,8 @@ export function CreateMosaicTx({
     networkType = 'testnet',
     senderPrivateKey,
     transferable = true,
+    duration = 86400n,
+    fee = 1_000_000n,
     deadlineHours = 2
 }) {
 
@@ -16,9 +18,10 @@ export function CreateMosaicTx({
     const privateKey = new PrivateKey(senderPrivateKey.trim());
     const keyPair = facade.createAccount(privateKey);
 
+    const safeDeadlineHours = Math.min(Math.max(Number(deadlineHours) || 2, 1), 2);
     const deadline = facade.network
         .fromDatetime(new Date())
-        .addHours(Number(deadlineHours))
+        .addHours(safeDeadlineHours)
         .timestamp;
 
     // uint32 nonce
@@ -40,7 +43,8 @@ export function CreateMosaicTx({
     const mosaicDefinitionTx = facade.transactionFactory.create({
         type: 'mosaic_definition_transaction_v1',
         signerPublicKey: keyPair.publicKey,
-        duration: 0n,
+        fee: BigInt(fee),
+        duration: BigInt(duration),
         nonce: nonce,
         flags: flags,
         divisibility: 0,

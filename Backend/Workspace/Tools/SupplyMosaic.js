@@ -7,6 +7,7 @@ export const CreateSupplyTx = ({
     senderPrivateKey,
     supply = 1_000_000n,
     mosaicId,
+    fee = 1_000_000n,
     deadlineHours = 2
 }) => {
 
@@ -19,6 +20,10 @@ export const CreateSupplyTx = ({
     if (!mosaicId)
         throw new Error("mosaicId is undefined");
 
+    const supplyDelta = BigInt(supply);
+    if (supplyDelta <= 0n)
+        throw new Error("supply must be greater than 0");
+
     // Facade
     const facade = new SymbolFacade(networkType);
 
@@ -27,19 +32,21 @@ export const CreateSupplyTx = ({
     const keyPair = facade.createAccount(privateKey);
 
     // Deadline
+    const safeDeadlineHours = Math.min(Math.max(Number(deadlineHours) || 2, 1), 2);
     const deadline = facade.network
         .fromDatetime(new Date())
-        .addHours(Number(deadlineHours))
+        .addHours(safeDeadlineHours)
         .timestamp;
 
     // ★ ここ重要
     const supplyTx = facade.transactionFactory.create({
         type: 'mosaic_supply_change_transaction_v1',
         signerPublicKey: keyPair.publicKey,
+        fee: BigInt(fee),
 
         mosaicId: BigInt('0x' + mosaicId), // 必ずBigInt
-        delta: BigInt(supply),             // 必ずBigInt
-        action: 0,                         // ★ increaseは0
+        delta: supplyDelta,                // 必ずBigInt
+        action: 1,                         // increase は 1
 
         deadline
     });
