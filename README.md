@@ -35,7 +35,7 @@
 
 ## 使用技術
 - Frontend: React, TypeScript, Vite, socket.io-client
-- Backend: Node.js, Express 5, mysql2, argon2, jsonwebtoken, symbol-sdk 3
+- Backend: Node.js, mysql2, argon2, jsonwebtoken, symbol-sdk 3
 - Infra: Docker, MySQL, Nginx
 - Blockchain: Symbol Testnet
 <!-- 使用技術を入力してください -->
