@@ -1,81 +1,68 @@
-/*========== Manual ==========
-# Input(obj)
-networkType:　mainnet or testnet
-senderPrivateKey: 送り元の秘密鍵
-recipientRawAddress: 受け取り手の文字列アドレス
-messageText: メッセージをつけたければ
-mosaics: どのモザイクをいくつ送りたいか
-例: 
-mosaics: [
-  { mosaicId: XYM_ID, amount: 1_000_000n },
-  { mosaicId: TOKEN_ID, amount: 5n }
-]
-deadlineHours: 有効期限[h]
+import { PrivateKey } from 'symbol-sdk';
+import { SymbolFacade } from 'symbol-sdk/symbol';
 
-# Output
-createTransferTx: 実際のトランザクション
-keyPair: 署名時に必要な秘密鍵/公開鍵
-facade: mainnet or testnetの指定をしているがそれが一貫性を保てるように引き継ぐ
-
-#Description
-mosaicはBigint型(数字末尾にnがつく)で指定する必要がある。
-1_000_000nは1000000と同じであり、ただ見やすくするだけのもの。
-========== Manual ==========*/
-
-// CreateTransferTx.js
-const symbolSdk = require('symbol-sdk');
-
-function CreateTransferTx({
+export default function CreateTransferTx({
     networkType = 'testnet',
     senderPrivateKey,
     recipientRawAddress,
     messageText = '',
+    fee = 100_000n,
     mosaics = [],
     deadlineHours = 2,
 }) {
     // Startup Log
     const logOwner = "CreateTransferTx";
     console.log(`\n${logOwner}-Function is running!\n`);
-    // I/O Log
-    console.log(`[${logOwner}] Input => networkType: ${networkType}, recipientRawAddress: ${recipientRawAddress}, messageText: ${messageText}, mosaics: ${mosaics}, deadlineHours: ${deadlineHours}`);
+    
+    // I/O Log (mosaicsはBigIntを含むため、そのまま表示するとエラーになるのを回避)
+    console.log(`[${logOwner}] Input => networkType: ${networkType}, recipientRawAddress: ${recipientRawAddress}, messageText: ${messageText}, deadlineHours: ${deadlineHours}`);
 
     // Facade 初期化
-    const facade = new symbolSdk.facade.SymbolFacade(networkType);
-    // 秘密鍵 → KeyPair
-    const keyPair = new symbolSdk.symbol.KeyPair( new symbolSdk.PrivateKey(senderPrivateKey) );
-    // 宛先アドレス解析（Base32 → 生データ + ネットワーク検証）
-    const recipient = facade.network.parseAddress(recipientRawAddress);
-    // Deadline 作成
-    const deadline = facade.network.fromDatetime(Date.now()).addHours(deadlineHours).timestamp;
-    // メッセージ
-    const message = new TextEncoder().encode(messageText);
+    const facade = new SymbolFacade(networkType);
+    
+    // 秘密鍵 → KeyPair (v3推奨の書き方)
+    const privateKeyObject = new PrivateKey(senderPrivateKey.trim());
+    const keyPair = facade.createAccount(privateKeyObject);
+    
+    // Deadline 作成 (v3のfromDatetimeはDateオブジェクトを受け取ります)
+    const safeDeadlineHours = Math.min(Math.max(Number(deadlineHours) || 2, 1), 2);
+    const deadline = facade.network.fromDatetime(new Date()).addHours(safeDeadlineHours).timestamp;
+    console.log(`[${logOwner}] Intermediate => KeyPair created, Deadline calculated`);
+
+    // メッセージの作成
+    // Symbolの仕様上、平文メッセージの先頭には「0x00」の1バイトを付与する必要があります。
+    // メッセージが空の場合は空の配列(Uint8Array(0))にします。
+    const message = messageText 
+        ? new Uint8Array([0x00, ...new TextEncoder().encode(messageText)]) 
+        : new Uint8Array(0);
 
     // トランザクション作成
+    // v3のファクトリーは宛先に文字列をそのまま渡すことができます。
     const createTransferTx = facade.transactionFactory.create({
         type: 'transfer_transaction_v1',
         signerPublicKey: keyPair.publicKey,
-        recipientAddress: recipient.toString(),
+        fee: BigInt(fee),
+        recipientAddress: recipientRawAddress,
         mosaics,
         message,
         deadline
     });
 
-    // I/O Log(JSON.stringify(表示するJSON, 表示項目指定, インデックス空白数指定))
-    console.log(`[${logOwner}] Output => createTransferTx: \n${{
+    // I/O Log (オブジェクトをテンプレートリテラルで表示しようとすると [object Object] になるので修正)
+    console.log(`[${logOwner}] Output => createTransferTx: `, {
         type: createTransferTx.type,
-        recipientAddress: createTransferTx.recipientAddress,
-        mosaics: createTransferTx.mosaics,
-        message: createTransferTx.message,
-        deadline: createTransferTx.deadline,
-    }}`);
+        recipientAddress: createTransferTx.recipientAddress.toString(),
+        mosaicsCount: createTransferTx.mosaics.length,
+        deadline: createTransferTx.deadline.toString()
+    });
+    
     // Shutdown Log
     console.log(`[${logOwner}] Shutdown!`);
 
     return {
-        createTransferTx,
+        tx: createTransferTx, // ルーター側の受け取り用 (const { tx } = ...)
+        createTransferTx,     // 互換性維持
         keyPair,
         facade
     };
 }
-
-module.exports = CreateTransferTx;
