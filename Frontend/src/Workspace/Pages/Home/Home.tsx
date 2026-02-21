@@ -76,8 +76,9 @@ function Home() {
         <div className="HomeBackground">
             <div className="HomeTab">
                 <div className="HomeLeft">
-                    <img src={icon} className="HomeIcon" alt="" />
                     <h1>ルーム</h1>
+                    {/* ログインボタンいらないならここをコメントアウト */}
+                    <ConfirmButton label="ログイン" onClick={() => navigate("/Login")} type="button" />
                 </div>
                 <div className="HomeRight">
                     <ConfirmButton label="NFC" onClick={() => navigate("/NFC")} type="button" />
