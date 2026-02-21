@@ -43,12 +43,8 @@ function Payment() {
 
     useEffect(() => {
         async function fetchRooms() {
-<<<<<<< HEAD
-            if (!roomId) return;
-=======
             if (!decodedRoomName) return;
 
->>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
             try {
                 const res = await fetch('/SendTokenByNFC/', {
                     method: 'POST',
@@ -76,7 +72,6 @@ function Payment() {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-<<<<<<< HEAD
                 body: JSON.stringify({
                     sendtoUserID: address,
                     Amount: token,
@@ -109,9 +104,6 @@ function Payment() {
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({ uid, reservationID, encrypted_password }),
-=======
-                body: JSON.stringify({ address, token, password }),
->>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
             });
 
             if (!res.ok) {
@@ -135,7 +127,6 @@ function Payment() {
             await HandleNfcPayment(payload.uid, payload.encrypted_password ?? null);
         };
 
-<<<<<<< HEAD
         // バックエンドからの決済結果イベントをリッスン
         const onPaymentResult = (payload: { reservationID: string, status: string, uid?: string, message?: string }) => {
             // 他の端末の予約IDイベントは無視する
@@ -149,16 +140,6 @@ function Payment() {
                 toast.error(`連続タッチはできません。少し待ってからかざしてください。`);
             } else {
                 toast.error(`決済エラー: ${payload.message}`);
-=======
-                if (data.nfcRead === true) {
-                    setNFCModal(false);
-                    clearInterval(interval);
-                    await HandlePayment();
-                }
-            } catch (e) {
-                console.log("Polling error:", e);
-                toast.error('通信エラーが発生しました');
->>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
             }
         };
 
@@ -201,28 +182,11 @@ function Payment() {
                         </div>
                         {error && <p className="PaymentError" style={{textAlign: "center"}}>{error}</p>}
                     </div>
-<<<<<<< HEAD
                     <ConfirmButton label="受付開始 (改札モード)" onClick={() => {
                         if (address === "" || token === 0) setError("入力が必要です");
                         else if (isNaN(Number(token)) || Number(token) <= 0) setError("支払額は正の数を入力してください");
                         else HandleReserveForNFC();
                     }} type="button" />
-=======
-                    <ConfirmButton label="支払う" onClick={() => {
-                        if (address === "" || token === 0) {
-                            setError("入力が必要です");
-                        } else if (isNaN(Number(token)) || Number(token) <= 0) {
-                            setError("支払額は正の数を入力してください");
-                        }
-                        else if ((handToken - token) < 0) { //本来はhandToken
-                            setError("残高が不足しています");
-                        }
-                        else {
-                            setPassModal(true)
-                        }
-                    }}
-                        type="button" />
->>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
                 </div>
             </div>
 

@@ -111,11 +111,7 @@ function Home() {
                             icon={`http://localhost:5000${room.RoomIconPath}` || icon}
                             label={room.RoomName}
                             onClick={() => {
-<<<<<<< HEAD
                                 navigate(`/Payment/${room.RoomName}`);
-=======
-                                navigate(`/Payment/${encodeURIComponent(room.RoomName)}`);
->>>>>>> 6028147d9933c8436467e0b19dd758729f43c4b6
                             }
                             }
                             type="button"
