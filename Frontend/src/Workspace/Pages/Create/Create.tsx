@@ -46,7 +46,6 @@ function Create() {
                 navigate("/Home");
             }
         } catch (err) {
-            toast.error('通信エラーが発生しました');
             console.log("Faild: Communication");
         }
     }
