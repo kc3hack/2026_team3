@@ -96,7 +96,6 @@ function Payment() {
                 return true;
             }
         } catch (err) {
-            toast.error('通信エラーが発生しました');
             console.log("Faild: Communication");
             return false;
         }
@@ -138,7 +137,7 @@ function Payment() {
             if (payload.reservationID !== reservationID) return;
 
             if (payload.status === 'success') {
-                toast.success(`決済完了！ (UID: ${payload.uid})`);
+                toast.success(`決済が完了しました！`);
                 // 残高をマイナスして画面を更新 (モーダルは開いたまま)
                 setHandToken(prev => prev - token);
             } else if (payload.status === 'cooldown') {
@@ -187,7 +186,7 @@ function Payment() {
                         </div>
                         {error && <p className="PaymentError" style={{textAlign: "center"}}>{error}</p>}
                     </div>
-                    <ConfirmButton label="登録" onClick={() => {
+                    <ConfirmButton label="支払い" onClick={() => {
                         if (address === "" || token === 0) setError("入力が必要です");
                         else if (isNaN(Number(token)) || Number(token) <= 0) setError("支払額は正の数を入力してください");
                         else HandleReserveForNFC();

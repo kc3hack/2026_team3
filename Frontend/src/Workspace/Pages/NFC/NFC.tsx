@@ -32,12 +32,11 @@ function NFC() {
         console.log("Faild: SendToken", data);
         return false;
       } else {
-        toast.success("NFCを登録しました");
+        toast.success("NFCを登録しました!");
         console.log("Success: SendToken");
         return true;
       }
     } catch (err) {
-      toast.error('通信エラーが発生しました');
       console.log("Faild: Communication");
       return false;
     }
