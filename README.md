@@ -2,6 +2,7 @@
 <!-- プロダクト名に変更してください -->
 ![プロダクト名](https://drive.google.com/file/d/1zYqOYqX9YAwQsRo92K3b_3d_-LYDvDLO/view?usp=drive_link)
 <!-- プロダクト名・イメージ画像を差し変えてください -->
+![Uploading Main画面.jpg…]()
 
 
 ## チーム：失職
