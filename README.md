@@ -1,6 +1,6 @@
 # TrusToken
 <!-- プロダクト名に変更してください -->
-![プロダクト名](https://kc3.me/cms/wp-content/uploads/2026/02/444e7120d5cdd74aa75f7a94bf8821a5-scaled.png)
+![プロダクト名](https://drive.google.com/file/d/1zYqOYqX9YAwQsRo92K3b_3d_-LYDvDLO/view?usp=drive_link)
 <!-- プロダクト名・イメージ画像を差し変えてください -->
 
 
